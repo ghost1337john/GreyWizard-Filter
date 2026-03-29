@@ -1,13 +1,13 @@
 # ============================================================
 # Traefik – Configuration statique
-# Lab     : GreyHaven
-# Hôte    : carcharoth.greyhaven – 192.168.1.42
-# Domaine : *.greyhaven (DNS interne uniquement)
+# Lab     : Exemple lab
+# Hôte    : host1.lab.local – 192.168.10.10
+# Domaine : *.lab.local (DNS interne uniquement)
 #
-# Note TLS : Le domaine .greyhaven étant privé, Let's Encrypt
+# Note TLS : Le domaine .lab.local étant privé, Let's Encrypt
 # n'est pas utilisé. Traefik génère des certificats auto-signés.
 # Pour un CA local de confiance, utilisez mkcert :
-#   mkcert -install && mkcert "*.greyhaven"
+#   mkcert -install && mkcert "*.lab.local"
 # puis montez les certificats dans le volume traefik_certs et
 # référencez-les dans config/traefik/dynamic/tls.yml.
 #

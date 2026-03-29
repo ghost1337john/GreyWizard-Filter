@@ -1,7 +1,7 @@
 #!/usr/bin/env bash#
 # ============================================================
-# GreyHaven – Script d'installation de la stack
-# Hôte    : carcharoth.greyhaven (192.168.1.42)
+# Script d'installation de la stack
+# Hôte    : host1.lab.local (192.168.10.10)
 #
 # Usage : sudo ./install.sh
 #
@@ -41,8 +41,8 @@ print_banner() {
   echo " ╚██████╔╝██║  ██║███████╗   ██║   ██║  ██║██║  ██║ ╚████╔╝ ███████╗██║ ╚████║"
   echo "  ╚═════╝ ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝"
   echo -e "${NC}"
-  echo "  GreyHaven Lab – Pi-hole + Squid + Traefik"
-  echo "  Hôte : carcharoth.greyhaven (192.168.1.3)"
+  echo "  Lab Example – Pi-hole + Squid + Traefik"
+  echo "  Hôte : host1.lab.local (192.168.10.10)"
   echo "  ─────────────────────────────────────────────────────────────────"
   echo ""
 }
@@ -106,8 +106,12 @@ prepare_environment() {
 
   cd "${SCRIPT_DIR}"
 
+  # Si .env absent, proposer la génération interactive
   if [[ ! -f ".env" ]]; then
-    if [[ -f ".env.example" ]]; then
+    if [[ -f "scripts/generate-env.sh" ]]; then
+      log_info "Aucun fichier .env trouvé. Lancement de la génération interactive."
+      bash scripts/generate-env.sh
+    elif [[ -f ".env.example" ]]; then
       cp .env.example .env
       log_success "Fichier .env créé depuis .env.example"
       log_warn "Pensez à modifier .env (PIHOLE_WEBPASSWORD en particulier) avant de continuer."
@@ -144,7 +148,7 @@ prepare_environment() {
 
 # ── Démarrage de la stack ────────────────────────────────────
 start_stack() {
-  log_info "Démarrage de la stack GreyHaven..."
+  log_info "Démarrage de la stack lab.local..."
   cd "${SCRIPT_DIR}"
 
   ${COMPOSE_CMD} pull
@@ -157,8 +161,8 @@ start_stack() {
 print_summary() {
   echo ""
   echo -e "${CYAN}${BOLD}  ── Services disponibles ──────────────────────────────────${NC}"
-  echo -e "  ${GREEN}Traefik dashboard${NC}  →  https://traefik.greyhaven"
-  echo -e "  ${GREEN}Pi-hole admin${NC}      →  https://pihole.greyhaven/admin"
+  echo -e "  ${GREEN}Traefik dashboard${NC}  →  https://traefik.lab.local"
+  echo -e "  ${GREEN}Pi-hole admin${NC}      →  https://pihole.lab.local/admin"
   echo -e "  ${GREEN}Proxy Squid${NC}        →  192.168.1.3:3128"
   echo -e "  ${GREEN}DNS Pi-hole${NC}        →  192.168.1.3:53"
   echo ""

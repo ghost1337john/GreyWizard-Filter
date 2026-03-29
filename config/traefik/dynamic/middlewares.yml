@@ -1,7 +1,7 @@
 # ============================================================
 # Traefik – Configuration dynamique
 # Middlewares réutilisables + paramètres TLS globaux
-# Lab : GreyHaven
+# Lab : Exemple lab
 # ============================================================
 
 http:

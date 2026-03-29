@@ -1,21 +1,21 @@
 # ============================================================
 # Traefik – Routes statiques (configuration dynamique)
-# Lab     : GreyHaven
-# Hôte    : carcharoth.greyhaven – 192.168.1.42
+# Lab     : Exemple lab
+# Hôte    : host1.lab.local – 192.168.10.10
 #
 # Ces routes complètent celles définies par les labels Docker.
 # Elles permettent de router des services qui ne tournent pas
-# dans des conteneurs (ex : palantir.greyhaven).
+# dans des conteneurs (ex : media.lab.local).
 # ============================================================
 
 http:
   routers:
 
-    # ── Palantir – forwarding vers le hub multimédia (Plex) ───
-    # Redirige https://palantir.greyhaven vers 192.168.1.2:32400
+    # ── Media – forwarding vers le hub multimédia (Plex) ───
+    # Redirige https://media.lab.local vers 192.168.10.20:32400
     # (port 32400 = Plex Media Server)
-    palantir:
-      rule: "Host(`palantir.greyhaven`)"
+    media:
+      rule: "Host(`media.lab.local`)"
       entryPoints:
         - websecure
       tls: {}
@@ -24,10 +24,10 @@ http:
         - secure-headers@file
       service: palantir-svc
 
-    # ── Gandalf – interface admin de la passerelle ────────────
-    # Redirige https://gandalf.greyhaven vers l'interface web du routeur
-    gandalf:
-      rule: "Host(`gandalf.greyhaven`)"
+    # ── GW – interface admin de la passerelle ────────────
+    # Redirige https://gw.lab.local vers l'interface web du routeur
+    gw:
+      rule: "Host(`gw.lab.local`)"
       entryPoints:
         - websecure
       tls: {}

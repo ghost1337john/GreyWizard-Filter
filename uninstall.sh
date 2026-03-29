@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ============================================================
-# GreyHaven – Script de désinstallation
-# Hôte : carcharoth.greyhaven (192.168.1.42)
+# Script de désinstallation
+# Hôte : host1.lab.local (192.168.10.10)
 #
 # Usage : sudo ./uninstall.sh [--purge]
 #
@@ -57,7 +57,7 @@ main() {
   log_info "Nettoyage des images orphelines..."
   docker image prune -f
 
-  log_success "Stack GreyHaven désinstallée."
+  log_success "Stack lab.local désinstallée."
 }
 
 main "$@"

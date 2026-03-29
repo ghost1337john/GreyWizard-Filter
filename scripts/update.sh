@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ============================================================
-# GreyHaven – Script de mise à jour de la stack
-# Hôte : carcharoth.greyhaven (192.168.1.42)
+# Script de mise à jour de la stack
+# Hôte : host1.lab.local (192.168.10.10)
 #
 # Usage : ./scripts/update.sh
 #
@@ -43,7 +43,7 @@ main() {
   log_info "Nettoyage des images obsolètes..."
   docker image prune -f
 
-  log_success "Stack GreyHaven mise à jour avec succès."
+  log_success "Stack lab.local mise à jour avec succès."
   echo ""
   log_info "État des services :"
   ${COMPOSE_CMD} ps

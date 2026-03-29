@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================
-# GreyHaven – Script de tests automatisés de la stack
+# Script de tests automatisés de la stack (exemple lab)
 # Vérifie la santé des services, la validité des fichiers YAML, et la résolution DNS
 # Usage : ./scripts/test-stack.sh
 # ============================================================

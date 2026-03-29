@@ -1,43 +1,7 @@
-# /etc/hosts – Template GreyHaven Lab
-# ============================================================
-# À déployer sur chaque machine du lab en remplacement ou en
-# complément du fichier /etc/hosts système.
+# Exemple de fichier hosts généré dynamiquement lors de l'installation
+# Format : <IP>   <hostname>.<domaine>   <hostname>
+# Ce fichier sera écrasé par le script generate-env.sh selon vos réponses
 #
-# Ce fichier assure la résolution DNS locale sur les hôtes qui
-# ne pointent pas encore vers Pi-hole (carcharoth:53).
-#
-# Infrastructure :
-#   gandalf.greyhaven    192.168.1.254  Passerelle / Routeur
-#   palantir.greyhaven   192.168.1.2    Hub multimédia
-#   carcharoth.greyhaven 192.168.1.3   Filtrage stack (hôte Docker)
-# ============================================================
-
-# ── Loopback ─────────────────────────────────────────────────
-127.0.0.1   localhost
-127.0.1.1   localhost.localdomain
-::1         localhost ip6-localhost ip6-loopback
-fe00::0     ip6-localnet
-ff00::0     ip6-mcastprefix
-ff02::1     ip6-allnodes
-ff02::2     ip6-allrouters
-
-# ── Résolution propre de la machine locale ────────────────────
-# Remplacez <hostname-machine> et <IP-machine> selon l'hôte cible.
-192.168.1.3  carcharoth.greyhaven carcharoth
-# 192.168.1.2   palantir.greyhaven palantir
-# 192.168.1.254 gandalf.greyhaven gandalf
-
-# ── Infrastructure GreyHaven ─────────────────────────────────
-192.168.1.254   gandalf.greyhaven       gandalf
-192.168.1.2     palantir.greyhaven      palantir
-192.168.1.3    carcharoth.greyhaven    carcharoth
-
-# ── Services exposés par Traefik (carcharoth) ────────────────
-192.168.1.3    traefik.greyhaven
-192.168.1.3    pihole.greyhaven
-192.168.1.3    proxy.greyhaven
-
-# ── Entrées supplémentaires (à adapter) ──────────────────────
-# 192.168.1.2    grafana.greyhaven
-# 192.168.1.2    prometheus.greyhaven
-# 192.168.1.2    alertmanager.greyhaven
+# 192.168.10.1    gw.lab.local      gw
+# 192.168.10.20   media.lab.local   media
+# 192.168.10.10   host1.lab.local   host1

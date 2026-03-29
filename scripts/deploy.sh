@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ============================================================
-# GreyHaven – Script de déploiement complet
-# Hôte : carcharoth.greyhaven (192.168.1.42)
+# Script de déploiement complet
+# Hôte : host1.lab.local (192.168.10.10)
 #
 # Usage : ./scripts/deploy.sh [--check]
 #
@@ -92,7 +92,7 @@ deploy() {
     return
   fi
 
-  log_info "Déploiement de la stack GreyHaven..."
+  log_info "Déploiement de la stack lab.local..."
   cd "${SCRIPT_DIR}"
   ${COMPOSE_CMD} up -d --remove-orphans
   log_success "Stack déployée."
@@ -125,10 +125,10 @@ health_checks() {
 
   # Résolution DNS via Pi-hole
   if command -v dig &>/dev/null; then
-    if dig +short carcharoth.greyhaven @127.0.0.1 | grep -q '192.168.1.42'; then
-      log_success "DNS greyhaven : résolution carcharoth.greyhaven → OK"
+    if dig +short host1.lab.local @127.0.0.1 | grep -q '192.168.10.10'; then
+      log_success "DNS lab.local : résolution host1.lab.local → OK"
     else
-      log_warn "DNS greyhaven : résolution carcharoth.greyhaven échouée"
+      log_warn "DNS lab.local : résolution host1.lab.local échouée"
       all_ok=false
     fi
   fi

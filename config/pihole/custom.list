@@ -1,7 +1,7 @@
 # ============================================================
-# Pi-hole – Résolutions DNS locales GreyHaven
-# Domaine   : greyhaven
-# Réseau    : 192.168.1.0/24
+# Pi-hole – Résolutions DNS locales (exemple lab)
+# Domaine   : lab.local
+# Réseau    : 192.168.10.0/24
 #
 # Format : <IP>   <hostname>
 #
@@ -11,33 +11,35 @@
 #   docker compose restart pihole
 # ============================================================
 
-# ── Infrastructure GreyHaven ─────────────────────────────────
+# ── Infrastructure du lab ─────────────────────────────────
 
-# gandalf.greyhaven — Passerelle / Routeur (192.168.1.254)
-# Le gardien de l'entrée du LAN.
-192.168.1.254   gandalf.greyhaven
 
-# palantir.greyhaven — Hub multimédia (192.168.1.2)
-# La pierre de vision — serveur multimédia centralisé du lab.
-192.168.1.2     palantir.greyhaven
+# gw.lab.local — Passerelle / Routeur (192.168.10.1)
+# Passerelle principale du lab.
+192.168.10.1   gw.lab.local
 
-# carcharoth.greyhaven — Serveur de filtrage (192.168.1.3)
-# Le loup gardien — héberge Pi-hole, Squid et Traefik.
-192.168.1.3    carcharoth.greyhaven
+# media.lab.local — Hub multimédia (192.168.10.20)
+# Serveur multimédia centralisé du lab.
+192.168.10.20  media.lab.local
 
-# ── Services exposés par Traefik sur carcharoth ──────────────
+# host1.lab.local — Serveur principal (192.168.10.10)
+# Héberge Pi-hole, Squid et Traefik.
+192.168.10.10  host1.lab.local
+
+
+# ── Services exposés par Traefik sur host1.lab.local ──────────────
 # Ces entrées doivent correspondre aux labels Host(…) du docker-compose.
 
 # Tableau de bord Traefik
-192.168.1.3    traefik.greyhaven
+192.168.10.10    traefik.lab.local
 
 # Interface d'administration Pi-hole
-192.168.1.3    pihole.greyhaven
+192.168.10.10    pihole.lab.local
 
 # Point d'entrée proxy (documentation / convenience alias)
-192.168.1.3    proxy.greyhaven
+192.168.10.10    proxy.lab.local
 
 # ── Ajoutez vos entrées supplémentaires ci-dessous ───────────
 # Exemple :
-# 192.168.1.2    grafana.greyhaven
-# 192.168.1.2    prometheus.greyhaven
+# 192.168.10.20    grafana.lab.local
+# 192.168.10.20    prometheus.lab.local

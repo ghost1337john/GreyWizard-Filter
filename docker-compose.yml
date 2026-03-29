@@ -1,13 +1,13 @@
 ## ============================================================
-# GreyHaven Lab – docker-compose.yml
+# Lab Example – docker-compose.yml
 #
 # Stack : Pi-hole (DNS + filtrage pub) +
 #         Squid   (proxy HTTP/HTTPS)   +
 #         Traefik (reverse proxy)
 #
-# Hôte           : carcharoth.greyhaven – 192.168.1.3
-# Domaine interne: greyhaven
-# Réseau local   : 192.168.1.0/24
+# Hôte           : host1.lab.local – 192.168.10.10
+# Domaine interne: lab.local
+# Réseau local   : 192.168.10.0/24
 #
 # Prérequis : Docker >= 20.x, Docker Compose >= 2.x
 # Usage     : cp .env.example .env && docker compose up -d
@@ -55,8 +55,8 @@ services:
       - TZ=${TZ:-Europe/Paris}
     labels:
       - "traefik.enable=true"
-      # Tableau de bord – accessible sur https://traefik.greyhaven
-      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${TRAEFIK_DOMAIN:-greyhaven}`)"
+      # Tableau de bord – accessible sur https://traefik.lab.local
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${TRAEFIK_DOMAIN:-lab.local}`)"
       - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
       - "traefik.http.routers.traefik-dashboard.tls=true"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
@@ -85,10 +85,10 @@ services:
     volumes:
       - pihole_data:/etc/pihole
       - pihole_dnsmasq:/etc/dnsmasq.d
-      # Résolutions DNS locales du lab greyhaven
+      # Résolutions DNS locales du lab
       - ./config/pihole/custom.list:/etc/pihole/custom.list:ro
       # Configuration dnsmasq étendue (domaine local, TTL…)
-      - ./config/dnsmasq/greyhaven.conf:/etc/dnsmasq.d/99-greyhaven.conf:ro
+      - ./config/dnsmasq/lab.conf:/etc/dnsmasq.d/99-lab.conf:ro
     environment:
       TZ: ${TZ:-Europe/Paris}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD:-changeme}
@@ -98,8 +98,8 @@ services:
       DNSSEC: "true"
     labels:
       - "traefik.enable=true"
-      # Interface Pi-hole – https://pihole.greyhaven/admin
-      - "traefik.http.routers.pihole.rule=Host(`pihole.${TRAEFIK_DOMAIN:-greyhaven}`)"
+      # Interface Pi-hole – https://pihole.lab.local/admin
+      - "traefik.http.routers.pihole.rule=Host(`pihole.${TRAEFIK_DOMAIN:-lab.local}`)"
       - "traefik.http.routers.pihole.entrypoints=websecure"
       - "traefik.http.routers.pihole.tls=true"
       - "traefik.http.routers.pihole.middlewares=auth@file,secure-headers@file"
@@ -119,7 +119,7 @@ services:
     networks:
       - proxy
     ports:
-      # Proxy accessible au LAN greyhaven sur carcharoth:3128
+      # Proxy accessible au LAN lab.local sur host1:3128
       - "${SERVER_IP:-192.168.1.3}:${SQUID_PORT:-3128}:3128"
     volumes:
       - ./config/squid/squid.conf:/etc/squid/squid.conf:ro
