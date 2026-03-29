@@ -53,38 +53,19 @@ La stack Docker tourne sur le serveur principal défini lors de l'installation (
 
 ## Démarrage rapide
 
-
 ```bash
 # 1. Cloner le dépôt
-#
-# → Dépôt public :
-git clone https://github.com/ghost1337john/grayhaven-carcharoth.git
-#
-# → Dépôt privé (avec token) :
-git clone https://<TOKEN>@github.com/ghost1337john/grayhaven-carcharoth.git
-#
-# → Dépôt privé (avec SSH) :
-git clone git@github.com:ghost1337john/grayhaven-carcharoth.git
-cd lab-example
+
+git clone https://github.com/ghost1337john/GreyWizard-Filter.git
+cd GreyWizard-Filter
 
 # 2. Préparer l'environnement système (Docker, outils, etc.)
-chmod +x scripts/bootstrap-prereqs.sh install.sh scripts/*.sh
 sudo ./scripts/bootstrap-prereqs.sh
 
-# 3. Configurer les variables d'environnement
-cp .env.example .env
-nano .env
-#   → Modifier au minimum :
-#      - PIHOLE_WEBPASSWORD (mot de passe admin Pi-hole, obligatoire !)
-#        Si vous laissez la valeur par défaut, le script d'installation vous demandera automatiquement d'en saisir un avant de poursuivre.
-#      - PIHOLE_DNS_ (serveurs DNS amont, séparés par ;)
-#      - Autres variables selon besoin
+# 3. Générer la configuration interactive
+./scripts/generate-env.sh
 
-# 4. Générer le hash basicAuth pour Traefik
-echo $(htpasswd -nB admin) | sed -e 's/\$/\$\$/g'
-#   → Copier la sortie dans config/traefik/dynamic/middlewares.yml à la place du placeholder
-
-# 5. Installer et démarrer la stack
+# 4. Installer et démarrer la stack
 sudo ./install.sh
 ```
 
