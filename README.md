@@ -1,3 +1,6 @@
+
+> ⚠️ **DISCLAIMER : Ce projet est en phase de test. Il peut contenir des bugs, des fonctionnalités incomplètes ou instables. Utilisation à vos risques et périls !**
+
 # GreyWizard-Filter : la stack de filtrage et reverse proxy adaptable à tout lab ou réseau local
 
 ---
