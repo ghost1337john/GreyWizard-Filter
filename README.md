@@ -1,5 +1,7 @@
 # GreyHaven Lab
 
+> **Statut du projet :** ⚠️ **EN PHASE DE TEST** — Ce projet est en cours d’expérimentation et d’ajustement. Merci de ne pas l’utiliser en production tant qu’il n’est pas validé. Je signalerai explicitement quand il sera stable et validé.
+
 Stack de filtrage et reverse proxy pour le lab interne **GreyHaven**.
 
 | Composant | Service           | Rôle                                    |
@@ -7,6 +9,20 @@ Stack de filtrage et reverse proxy pour le lab interne **GreyHaven**.
 | Pi-hole   | DNS               | Résolution locale + bloqueur publicitaire |
 | Squid     | Proxy HTTP/HTTPS  | Cache + anonymisation + filtrage DNS    |
 | Traefik   | Reverse Proxy     | Routage HTTPS, dashboard, middlewares   |
+
+---
+
+## Fonctionnement global des outils
+
+- **Pi-hole** : Fournit la résolution DNS locale pour tout le lab et bloque la publicité/les trackers. Il reçoit toutes les requêtes DNS des clients (machines, serveurs, etc.).
+- **Squid** : Sert de proxy HTTP/HTTPS pour les clients du réseau. Il permet le cache, l’anonymisation et le filtrage DNS des requêtes web. Les clients peuvent configurer leur navigateur ou OS pour passer par Squid.
+- **Traefik** : Reverse proxy qui gère le routage HTTPS, la terminaison TLS (certificats auto-signés ou mkcert), l’accès sécurisé aux interfaces web (dashboard Traefik, Pi-hole admin) et l’application de middlewares (authentification, headers, etc.).
+
+**Flux typique :**
+- Un client du lab configure son DNS sur Pi-hole (192.168.1.3) et, s’il le souhaite, son proxy HTTP sur Squid (192.168.1.3:3128).
+- Les requêtes DNS passent par Pi-hole, qui filtre et résout localement ou en amont.
+- Les requêtes web passent par Squid, qui peut les filtrer, les cacher et les anonymiser.
+- Les accès aux interfaces web (admin Pi-hole, dashboard Traefik) passent par Traefik, qui applique HTTPS et l’authentification.
 
 ---
 
