@@ -120,9 +120,18 @@ prepare_environment() {
   fi
 
   # Vérification du mot de passe Pi-hole
-  if grep -q 'PIHOLE_WEBPASSWORD=changeme' .env; then
+  if grep -q '^PIHOLE_WEBPASSWORD=changeme' .env; then
     log_warn "PIHOLE_WEBPASSWORD est toujours sur la valeur par défaut !"
-    log_warn "Modifiez .env avant d'exposer le service sur le réseau."
+    log_info "Vous devez définir un mot de passe admin Pi-hole."
+    read -rsp "Nouveau mot de passe Pi-hole (ne sera pas affiché) : " NEW_PWD
+    echo
+    if [[ -z "$NEW_PWD" ]]; then
+      log_error "Mot de passe vide, annulation."
+      exit 1
+    fi
+    # Remplacement dans .env
+    sed -i.bak "s/^PIHOLE_WEBPASSWORD=changeme/PIHOLE_WEBPASSWORD=$NEW_PWD/" .env
+    log_success "Mot de passe Pi-hole mis à jour dans .env."
   fi
 
   # Vérification du hash auth Traefik

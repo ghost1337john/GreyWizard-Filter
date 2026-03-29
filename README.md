@@ -38,7 +38,8 @@ sudo ./scripts/bootstrap-prereqs.sh
 cp .env.example .env
 nano .env
 #   → Modifier au minimum :
-#      - PIHOLE_WEBPASSWORD (mot de passe admin Pi-hole)
+#      - PIHOLE_WEBPASSWORD (mot de passe admin Pi-hole, obligatoire !)
+#        Si vous laissez la valeur par défaut, le script d'installation vous demandera automatiquement d'en saisir un avant de poursuivre.
 #      - PIHOLE_DNS_ (serveurs DNS amont, séparés par ;)
 #      - Autres variables selon besoin
 
