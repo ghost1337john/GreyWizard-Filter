@@ -1,0 +1,63 @@
+# ============================================================
+# Traefik – Configuration dynamique
+# Middlewares réutilisables + paramètres TLS globaux
+# Lab : GreyHaven
+# ============================================================
+
+http:
+  middlewares:
+
+    # ── Authentification basique ─────────────────────────────
+    # Protège les tableaux de bord (Traefik, Pi-hole).
+    # Pour générer un hash bcrypt :
+    #   echo $(htpasswd -nB admin) | sed -e 's/\$/\$\$/g'
+    auth:
+      basicAuth:
+        users:
+          - "admin:$$2y$$05$$placeholder_replace_with_real_hash"
+
+    # ── En-têtes de sécurité HTTP ────────────────────────────
+    secure-headers:
+      headers:
+        sslRedirect: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 63072000
+        contentTypeNosniff: true
+        browserXssFilter: true
+        referrerPolicy: "strict-origin-when-cross-origin"
+        frameDeny: true
+        customFrameOptionsValue: "SAMEORIGIN"
+        contentSecurityPolicy: "default-src 'self'"
+        permissionsPolicy: "camera=(), microphone=(), geolocation=()"
+
+    # ── Limitation du débit ──────────────────────────────────
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50
+
+    # ── Compression des réponses ─────────────────────────────
+    compress:
+      compress: {}
+
+    # ── Redirection HTTP → HTTPS ─────────────────────────────
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
+# ── Configuration TLS globale ────────────────────────────────
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+      sniStrict: true

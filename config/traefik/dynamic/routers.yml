@@ -1,0 +1,53 @@
+# ============================================================
+# Traefik – Routes statiques (configuration dynamique)
+# Lab     : GreyHaven
+# Hôte    : carcharoth.greyhaven – 192.168.1.42
+#
+# Ces routes complètent celles définies par les labels Docker.
+# Elles permettent de router des services qui ne tournent pas
+# dans des conteneurs (ex : palantir.greyhaven).
+# ============================================================
+
+http:
+  routers:
+
+    # ── Palantir – forwarding vers le hub multimédia (Plex) ───
+    # Redirige https://palantir.greyhaven vers 192.168.1.2:32400
+    # (port 32400 = Plex Media Server)
+    palantir:
+      rule: "Host(`palantir.greyhaven`)"
+      entryPoints:
+        - websecure
+      tls: {}
+      middlewares:
+        - auth@file
+        - secure-headers@file
+      service: palantir-svc
+
+    # ── Gandalf – interface admin de la passerelle ────────────
+    # Redirige https://gandalf.greyhaven vers l'interface web du routeur
+    gandalf:
+      rule: "Host(`gandalf.greyhaven`)"
+      entryPoints:
+        - websecure
+      tls: {}
+      middlewares:
+        - auth@file
+        - secure-headers@file
+      service: gandalf-svc
+
+  services:
+
+    # Service palantir – hub multimédia (Plex sur port 32400)
+    palantir-svc:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.2:32400"
+        passHostHeader: true
+
+    # Service gandalf – interface admin du routeur (port 80 par ex.)
+    gandalf-svc:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.254:80"
+        passHostHeader: true

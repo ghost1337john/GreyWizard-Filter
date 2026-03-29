@@ -1,0 +1,136 @@
+## ============================================================
+# GreyHaven Lab – docker-compose.yml
+#
+# Stack : Pi-hole (DNS + filtrage pub) +
+#         Squid   (proxy HTTP/HTTPS)   +
+#         Traefik (reverse proxy)
+#
+# Hôte           : carcharoth.greyhaven – 192.168.1.3
+# Domaine interne: greyhaven
+# Réseau local   : 192.168.1.0/24
+#
+# Prérequis : Docker >= 20.x, Docker Compose >= 2.x
+# Usage     : cp .env.example .env && docker compose up -d
+# ============================================================
+
+networks:
+  # Réseau interne partagé par tous les services de la stack
+  proxy:
+    name: proxy
+    driver: bridge
+  # Réseau isolé pour Pi-hole (DNS)
+  pihole_net:
+    name: pihole_net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+volumes:
+  pihole_data:
+  pihole_dnsmasq:
+  squid_cache:
+  traefik_certs:
+
+services:
+
+  # ── Traefik – reverse proxy ──────────────────────────────────
+  traefik:
+    image: traefik:v3.3
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./config/traefik/dynamic:/etc/traefik/dynamic:ro
+      - traefik_certs:/certs
+    environment:
+      - TZ=${TZ:-Europe/Paris}
+    labels:
+      - "traefik.enable=true"
+      # Tableau de bord – accessible sur https://traefik.greyhaven
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${TRAEFIK_DOMAIN:-greyhaven}`)"
+      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dashboard.tls=true"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - "traefik.http.routers.traefik-dashboard.middlewares=auth@file,secure-headers@file"
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ── Pi-hole – DNS + bloqueur publicitaire ────────────────────
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    restart: unless-stopped
+    networks:
+      proxy:
+      pihole_net:
+        ipv4_address: 172.30.0.2
+    ports:
+      # DNS – port 53 bind sur l'IP de carcharoth
+      - "${SERVER_IP:-192.168.1.3}:53:53/tcp"
+      - "${SERVER_IP:-192.168.1.3}:53:53/udp"
+      # Interface web locale (Traefik fait le routage HTTPS)
+      - "127.0.0.1:8080:80"
+    volumes:
+      - pihole_data:/etc/pihole
+      - pihole_dnsmasq:/etc/dnsmasq.d
+      # Résolutions DNS locales du lab greyhaven
+      - ./config/pihole/custom.list:/etc/pihole/custom.list:ro
+      # Configuration dnsmasq étendue (domaine local, TTL…)
+      - ./config/dnsmasq/greyhaven.conf:/etc/dnsmasq.d/99-greyhaven.conf:ro
+    environment:
+      TZ: ${TZ:-Europe/Paris}
+      WEBPASSWORD: ${PIHOLE_WEBPASSWORD:-changeme}
+      FTLCONF_LOCAL_IPV4: ${SERVER_IP:-192.168.1.3}
+      PIHOLE_DNS_: ${PIHOLE_DNS:-9.9.9.9;149.112.112.112}
+      DNSMASQ_LISTENING: single
+      DNSSEC: "true"
+    labels:
+      - "traefik.enable=true"
+      # Interface Pi-hole – https://pihole.greyhaven/admin
+      - "traefik.http.routers.pihole.rule=Host(`pihole.${TRAEFIK_DOMAIN:-greyhaven}`)"
+      - "traefik.http.routers.pihole.entrypoints=websecure"
+      - "traefik.http.routers.pihole.tls=true"
+      - "traefik.http.routers.pihole.middlewares=auth@file,secure-headers@file"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/admin/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  # ── Squid – proxy HTTP/HTTPS avec cache ──────────────────────
+  squid:
+    image: ubuntu/squid:latest
+    container_name: squid
+    restart: unless-stopped
+    networks:
+      - proxy
+    ports:
+      # Proxy accessible au LAN greyhaven sur carcharoth:3128
+      - "${SERVER_IP:-192.168.1.42}:${SQUID_PORT:-3128}:3128"
+    volumes:
+      - ./config/squid/squid.conf:/etc/squid/squid.conf:ro
+      - squid_cache:/var/spool/squid
+    environment:
+      - TZ=${TZ:-Europe/Paris}
+    labels:
+      - "traefik.enable=false"
+    healthcheck:
+      test: ["CMD-SHELL", "squidclient -h 127.0.0.1 mgr:info > /dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
