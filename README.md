@@ -36,8 +36,16 @@ La stack Docker tourne sur le serveur principal défini lors de l'installation (
 
 
 ```bash
-# 1. Cloner le dépôt (privé)
-#   (voir plus bas pour l'accès si besoin de token ou SSH)
+# 1. Cloner le dépôt
+#
+# → Dépôt public :
+git clone https://github.com/ghost1337john/grayhaven-carcharoth.git
+#
+# → Dépôt privé (avec token) :
+git clone https://<TOKEN>@github.com/ghost1337john/grayhaven-carcharoth.git
+#
+# → Dépôt privé (avec SSH) :
+git clone git@github.com:ghost1337john/grayhaven-carcharoth.git
 cd lab-example
 
 # 2. Préparer l'environnement système (Docker, outils, etc.)
