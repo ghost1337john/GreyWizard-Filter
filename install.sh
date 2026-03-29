@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ============================================================
 # GreyHaven – Script d'installation de la stack
-# Hôte    : carcharoth.greyhaven (192.168.1.3)
+# Hôte    : carcharoth.greyhaven (192.168.1.42)
 #
 # Usage : sudo ./install.sh
 #
@@ -84,6 +84,15 @@ check_ports() {
       if [[ "${port}" == "53" ]]; then
         log_warn "Pour libérer le port 53 : sudo systemctl stop systemd-resolved"
         log_warn "                          sudo systemctl disable systemd-resolved"
+        log_warn "Pour réactiver le port 53 pour Pi-hole : sudo systemctl mask systemd-resolved && sudo systemctl stop systemd-resolved && sudo systemctl restart networking"
+        if systemctl is-active --quiet systemd-resolved; then
+          log_info "Arrêt de systemd-resolved pour libérer le port 53..."
+          sudo systemctl stop systemd-resolved
+          sudo systemctl disable systemd-resolved
+          sudo systemctl mask systemd-resolved
+          sudo systemctl restart networking
+          log_success "Port 53 libéré."
+        fi
       fi
     else
       log_success "Port ${port} disponible"

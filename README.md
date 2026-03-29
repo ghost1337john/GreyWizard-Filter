@@ -16,9 +16,9 @@ Stack de filtrage et reverse proxy pour le lab interne **GreyHaven**.
 |------------------------|-----------------|-----------------------------|
 | `gandalf.greyhaven`    | 192.168.1.254   | Passerelle / Routeur        |
 | `palantir.greyhaven`   | 192.168.1.2     | Hub multimédia              |
-| `carcharoth.greyhaven` | 192.168.1.42    | Hôte Docker — stack filtre  |
+| `carcharoth.greyhaven` | 192.168.1.3    | Hôte Docker — stack filtre  |
 
-La stack Docker tourne entièrement sur **carcharoth** (192.168.1.42).
+La stack Docker tourne entièrement sur **carcharoth** (192.168.1.3).
 
 ---
 
@@ -76,11 +76,11 @@ Notes :
 |----------------------------------------|----------------------|--------------|
 | https://traefik.greyhaven              | Tableau de bord Traefik | Oui (basic) |
 | https://pihole.greyhaven/admin         | Interface Pi-hole    | Oui (basic) |
-| `192.168.1.42:3128`                    | Proxy Squid          | Non (LAN)   |
-| `192.168.1.42:53`                      | DNS Pi-hole          | Non          |
+| `192.168.1.3:3128`                    | Proxy Squid          | Non (LAN)   |
+| `192.168.1.3:53`                      | DNS Pi-hole          | Non          |
 
 > **Note DNS** : pour résoudre les noms `*.greyhaven`, configurez vos clients et
-> serveurs avec `192.168.1.42` comme serveur DNS primaire.
+> serveurs avec `192.168.1.3` comme serveur DNS primaire.
 
 ---
 
@@ -161,14 +161,14 @@ greyhaven/
 Ajoutez dans `/etc/resolv.conf` (Linux) ou les paramètres réseau :
 
 ```
-nameserver 192.168.1.42
+nameserver 192.168.1.3
 ```
 
 Ou utilisez le fichier [config/hosts](config/hosts) sur les machines sans DNS Pi-hole.
 
 ### Option B — DHCP de gandalf
 
-Configurez gandalf (192.168.1.254) pour distribuer `192.168.1.42` comme DNS via DHCP.
+Configurez gandalf (192.168.1.254) pour distribuer `192.168.1.3` comme DNS via DHCP.
 
 ---
 

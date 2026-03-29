@@ -120,7 +120,7 @@ services:
       - proxy
     ports:
       # Proxy accessible au LAN greyhaven sur carcharoth:3128
-      - "${SERVER_IP:-192.168.1.42}:${SQUID_PORT:-3128}:3128"
+      - "${SERVER_IP:-192.168.1.3}:${SQUID_PORT:-3128}:3128"
     volumes:
       - ./config/squid/squid.conf:/etc/squid/squid.conf:ro
       - squid_cache:/var/spool/squid
