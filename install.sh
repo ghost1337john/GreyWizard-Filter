@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash#
 # ============================================================
 # GreyHaven – Script d'installation de la stack
 # Hôte    : carcharoth.greyhaven (192.168.1.42)
