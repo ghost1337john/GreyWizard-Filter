@@ -1,0 +1,10 @@
+# Exemple de configuration AdGuard Home
+# Copiez ce fichier en AdGuardHome.yaml pour personnaliser la config
+# Voir la documentation officielle : https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration
+
+bind_host: 0.0.0.0
+bind_port: 3000
+users:
+  - name: admin
+    password: changeme
+# ... autres options à compléter selon vos besoins ...

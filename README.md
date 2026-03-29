@@ -1,6 +1,23 @@
-# Stack de filtrage et reverse proxy adaptable à tout lab ou réseau local
+# GreyWizard-Filter : la stack de filtrage et reverse proxy adaptable à tout lab ou réseau local
 
-| Pi-hole   | DNS               | Résolution locale + bloqueur publicitaire |
+---
+
+## Il était une fois... (prologue façon Seigneur des Anneaux)
+
+Dans les terres numériques du LAN, là où les publicités et les trackers rôdent dans l’ombre, un magicien se dressa pour protéger les royaumes des utilisateurs. Son nom : **GreyWizard-Filter**.
+
+Guidé par la sagesse de Gandalf, la force d'Aragorn et la lumière d'Eärendil, ce projet réunit trois artefacts légendaires :
+
+- **Pi-hole** (le Gardien du DNS) : repousse les armées de publicités et de malwares, filtrant les requêtes indésirables comme un bouclier elfique.
+- **Squid** (le Proxy Caméléon) : dissimule les traces des voyageurs du réseau, met en cache les savoirs, et détourne les regards indiscrets.
+- **Traefik** (le Passeur de Portails) : ouvre les portes sécurisées du royaume, distribue les certificats magiques et veille sur les accès aux tours de contrôle.
+
+Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des forces obscures du web. Mais n’ayez crainte, jeune hobbit : l’installation est plus simple que de traverser la Moria, et la configuration s’adapte à tous les royaumes, du plus modeste des villages au plus vaste des citadelles.
+
+---
+
+
+| Pi-hole / AdGuard Home | DNS               | Résolution locale + bloqueur publicitaire |
 | Squid     | Proxy HTTP/HTTPS  | Cache + anonymisation + filtrage DNS    |
 | Traefik   | Reverse Proxy     | Routage HTTPS, dashboard, middlewares   |
 
@@ -8,15 +25,17 @@
 
 ## Fonctionnement global des outils
 
-- **Pi-hole** : Fournit la résolution DNS locale pour tout le réseau et bloque la publicité/les trackers. Il reçoit toutes les requêtes DNS des clients (machines, serveurs, etc.).
+- **Pi-hole** ou **AdGuard Home** : Fournit la résolution DNS locale pour tout le réseau et bloque la publicité/les trackers. Vous pouvez choisir l’un ou l’autre lors de l’installation (variable `DNS_ENGINE` dans `.env`).
+    - **Pi-hole** : Interface web sur https://pihole.lab.local/admin
+    - **AdGuard Home** : Interface web sur https://adguard.lab.local
 - **Squid** : Sert de proxy HTTP/HTTPS pour les clients du réseau. Il permet le cache, l’anonymisation et le filtrage DNS des requêtes web. Les clients peuvent configurer leur navigateur ou OS pour passer par Squid.
-- **Traefik** : Reverse proxy qui gère le routage HTTPS, la terminaison TLS (certificats auto-signés ou mkcert), l’accès sécurisé aux interfaces web (dashboard Traefik, Pi-hole admin) et l’application de middlewares (authentification, headers, etc.).
+- **Traefik** : Reverse proxy qui gère le routage HTTPS, la terminaison TLS (certificats auto-signés ou mkcert), l’accès sécurisé aux interfaces web (dashboard Traefik, Pi-hole/AdGuard admin) et l’application de middlewares (authentification, headers, etc.).
 
 **Flux typique :**
-- Un client configure son DNS sur Pi-hole (IP définie dans le .env) et, s’il le souhaite, son proxy HTTP sur Squid (IP:port définis dans le .env).
-- Les requêtes DNS passent par Pi-hole, qui filtre et résout localement ou en amont.
+- Un client configure son DNS sur Pi-hole ou AdGuard Home (IP définie dans le .env) et, s’il le souhaite, son proxy HTTP sur Squid (IP:port définis dans le .env).
+- Les requêtes DNS passent par le moteur choisi, qui filtre et résout localement ou en amont.
 - Les requêtes web passent par Squid, qui peut les filtrer, les cacher et les anonymiser.
-- Les accès aux interfaces web (admin Pi-hole, dashboard Traefik) passent par Traefik, qui applique HTTPS et l’authentification.
+- Les accès aux interfaces web (admin Pi-hole/AdGuard, dashboard Traefik) passent par Traefik, qui applique HTTPS et l’authentification.
 
 ---
 
@@ -252,6 +271,34 @@ docker compose restart pihole
 | Firefox         | Préférences → Réseau → Proxy manuel : 192.168.10.10:3128 |
 | Windows         | Paramètres → Réseau → Proxy : 192.168.10.10:3128 |
 | APT (Debian)    | `/etc/apt/apt.conf.d/99proxy` : `Acquire::http::Proxy "http://192.168.10.10:3128";` |
+
+---
+
+## 🔥 Important : Redirection DNS via le firewall/routeur
+
+Pour garantir que tout le trafic DNS du réseau soit filtré par Pi-hole ou AdGuard Home, il est fortement recommandé de configurer votre firewall/routeur pour :
+
+- Rediriger toutes les requêtes DNS sortantes (port 53, TCP/UDP) vers l’IP du serveur où tourne la stack (variable SERVER_IP dans .env).
+- Bloquer l’accès direct à d’autres serveurs DNS publics depuis le LAN (optionnel mais conseillé).
+
+**Exemple de règle iptables (à adapter à votre IP) :**
+
+```bash
+# Redirige tout le trafic DNS sortant du LAN vers le serveur DNS local (ex : 192.168.10.10)
+iptables -t nat -A PREROUTING -p udp --dport 53 -j DNAT --to-destination 192.168.10.10:53
+iptables -t nat -A PREROUTING -p tcp --dport 53 -j DNAT --to-destination 192.168.10.10:53
+```
+
+Cela force tous les clients à utiliser le filtrage DNS, même s’ils tentent de contourner la configuration DHCP ou manuelle.
+
+---
+
+## 📦 Dossiers de configuration AdGuard Home
+
+Si vous choisissez AdGuard Home comme moteur DNS, les dossiers `config/adguardhome/work` et `config/adguardhome/conf` sont créés automatiquement lors de la génération du `.env`.
+
+- **Pas de fichier de configuration par défaut** : AdGuard Home génère ses fichiers de config au premier lancement. Vous pouvez placer vos propres fichiers dans ces dossiers si besoin.
+- Un fichier `README.txt` est placé pour vous guider.
 
 ---
 
