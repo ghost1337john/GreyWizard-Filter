@@ -1,3 +1,7 @@
+  # Correction des permissions sur les dossiers AdGuard Home
+  mkdir -p config/adguardhome/work config/adguardhome/conf
+  chown -R 1000:1000 config/adguardhome/work config/adguardhome/conf || true
+  chmod 700 config/adguardhome/work config/adguardhome/conf || true
 #!/usr/bin/env bash#
 # ============================================================
 # Script d'installation de la stack
@@ -140,6 +144,23 @@ start_stack() {
   ${COMPOSE_CMD} up -d --remove-orphans
   log_success "Stack démarrée."
 
+  # Pause et documentation pour l'installation web manuelle
+  local yaml_path="config/adguardhome/conf/AdGuardHome.yaml"
+  if [[ ! -f "$yaml_path" ]]; then
+    echo -e "\n${YELLOW}───────────────────────────────────────────────────────────────"
+    echo -e "${YELLOW}Première initialisation d'AdGuard Home${NC}"
+    echo -e "${YELLOW}Ouvrez votre navigateur sur http://$SERVER_IP:$ADGUARD_PORT${NC}"
+    echo -e "${YELLOW}Terminez l'assistant d'installation web (install.html) puis relancez :${NC}"
+    echo -e "${YELLOW}    sudo ./install.sh${NC}"
+    echo -e "${YELLOW}───────────────────────────────────────────────────────────────\n"
+    for i in {30..1}; do
+      echo -ne "Attente utilisateur : $i secondes restantes...\r"
+      sleep 1
+    done
+    echo -e "\n"
+    exit 0
+  fi
+
   # Attendre la génération du fichier AdGuardHome.yaml (max 30s)
   local yaml_path="config/adguardhome/conf/AdGuardHome.yaml"
   local waited=0
@@ -178,25 +199,13 @@ adapt_adguardhome_config() {
     exit 1
   fi
 
-  ADMIN_USER="admin"
-  ADMIN_PASS="admin"
-  if command -v htpasswd >/dev/null 2>&1; then
-    ADMIN_HASH=$(htpasswd -B -C 10 -n -b "$ADMIN_USER" "$ADMIN_PASS" | cut -d: -f2)
-  else
-    log_warn "htpasswd non trouvé, le mot de passe sera en clair (non recommandé). Installez apache2-utils ou httpd-tools pour la génération automatique du hash bcrypt."
-    ADMIN_HASH="$ADMIN_PASS"
-  fi
-
   if command -v yq >/dev/null 2>&1; then
-    yq -i \
-      '.bind_port = env(ADGUARD_PORT) | .users[0].name = env(ADMIN_USER) | .users[0].password = env(ADMIN_HASH)' \
-      "$yaml_path"
+    yq -i '.bind_port = env(ADGUARD_PORT)' "$yaml_path"
   else
-    sed -i "s/^bind_port:.*/bind_port: $ADGUARD_PORT/" "$yaml_path"
-    sed -i "/^users:/,/^$/ {s/^\( *password: \).*/\1$ADMIN_HASH/}" "$yaml_path"
+    sed -i "s|^bind_port:.*|bind_port: $ADGUARD_PORT|" "$yaml_path"
   fi
 
-  log_success "Configuration AdGuard Home adaptée (port, mot de passe admin hashé)."
+  log_success "Configuration AdGuard Home adaptée (port)."
 
   # Redémarrage du conteneur pour prise en compte
   if docker ps | grep -q adguardhome; then

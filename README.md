@@ -73,11 +73,18 @@ echo $(htpasswd -nB admin) | sed -e 's/\$/\$\$/g'
 
 # 5. Copier ce hash dans config/traefik/dynamic/middlewares.yml à la place du placeholder.
 
-# 6. Installer la stack
+# 6. Installer la stack (premier lancement)
 sudo bash ./install.sh
 
-# 7. Démarrer la stack
-sudo docker compose up -d
+# 7. Lors du premier lancement, ouvrez votre navigateur sur http://<IP>:<PORT> (ex : http://192.168.1.3:8080)
+#    et terminez l'assistant d'installation web AdGuard Home (choix du mot de passe admin, etc.).
+#    Laissez le script attendre ou relancez ./install.sh après l'installation web.
+
+# 8. Relancez l'installation pour appliquer automatiquement le port choisi dans .env :
+sudo bash ./install.sh
+
+# 9. (Optionnel) Redémarrez la stack si besoin :
+sudo docker compose restart
 
 > ⚠️ **Important** : Ne lancez pas `compose-up.sh` avant `install.sh` !
 > Le script d'installation prépare l'environnement, crée les dossiers et fichiers nécessaires, et vérifie la configuration. Si vous inversez l'ordre, la stack risque de ne pas démarrer correctement ou d'être incomplète.
