@@ -124,7 +124,17 @@ request_timeout 60 seconds
 acl localnet src $(echo $SERVER_IP | awk -F. '{print $1 "." $2 "." $3 ".0/24"}')
 EOF
 
-# Génération dynamique du fichier de config AdGuard Home
+
+# Génération dynamique du fichier de config AdGuard Home avec hash bcrypt
+ADMIN_USER="admin"
+ADMIN_PASS="admin"
+if command -v htpasswd >/dev/null 2>&1; then
+  ADMIN_HASH=$(htpasswd -B -C 10 -n -b "$ADMIN_USER" "$ADMIN_PASS" | cut -d: -f2)
+else
+  echo -e "${YELLOW}htpasswd non trouvé, le mot de passe sera en clair (non recommandé). Installez apache2-utils ou httpd-tools pour la génération automatique du hash bcrypt.${NC}"
+  ADMIN_HASH="$ADMIN_PASS"
+fi
+
 cat > config/adguardhome/conf/AdGuardHome.yaml <<EOF
 # Configuration version : v1.0
 bind_host: 0.0.0.0
@@ -132,8 +142,8 @@ bind_port: $ADGUARD_PORT
 
 # --- Authentification administrateur ---
 users:
-  - name: admin
-    password: admin  # Mot de passe par défaut : "admin"
+  - name: $ADMIN_USER
+    password: $ADMIN_HASH  # Mot de passe par défaut : "$ADMIN_PASS" (hashé si possible)
 # IMPORTANT : Changez impérativement ce mot de passe via l'interface web AdGuard Home après la première connexion !
 # (Menu Paramètres → Général → Utilisateurs)
 EOF
