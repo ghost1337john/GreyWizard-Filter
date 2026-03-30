@@ -1,3 +1,15 @@
+      # Ajout de l'option dns.rewrites.enabled: true
+      if command -v yq >/dev/null 2>&1; then
+        yq -i '.dns.rewrites.enabled = true' "$yaml_path"
+      else
+        # Ajout manuel si la section dns: existe déjà
+        if grep -q '^dns:' "$yaml_path"; then
+          sed -i '/^dns:/a\  rewrites:\n    enabled: true' "$yaml_path"
+        else
+          # Ajoute la section complète à la fin
+          echo -e '\ndns:\n  rewrites:\n    enabled: true' >> "$yaml_path"
+        fi
+      fi
     # Copier le fichier lab.conf dans le dossier conf d'AdGuard Home si généré par generate-env.sh
     if [ -f config/dnsmasq/lab.conf ]; then
       cp config/dnsmasq/lab.conf config/adguardhome/conf/lab.conf
