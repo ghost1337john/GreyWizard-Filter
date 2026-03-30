@@ -13,10 +13,10 @@
 # Usage     : cp .env.example .env && docker compose up -d
 # ============================================================
 
-# networks:
-#   proxy:
-#     name: proxy
-#     driver: bridge
+networks:
+  proxy:
+    name: proxy
+    driver: bridge
 
 volumes:
   squid_cache:
@@ -77,13 +77,13 @@ services:
       - ./config/adguardhome/conf:/opt/adguardhome/conf
     environment:
       - TZ=Europe/Paris
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.adguardhome.rule=Host(`adguard.${TRAEFIK_DOMAIN:-lab.local}`)"
-    #   - "traefik.http.routers.adguardhome.entrypoints=websecure"
-    #   - "traefik.http.routers.adguardhome.tls=true"
-    #   - "traefik.http.routers.adguardhome.middlewares=auth@file,secure-headers@file"
-    #   - "traefik.http.services.adguardhome.loadbalancer.server.port=3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adguardhome.rule=Host(`adguard.${TRAEFIK_DOMAIN:-lab.local}`)"
+      - "traefik.http.routers.adguardhome.entrypoints=websecure"
+      - "traefik.http.routers.adguardhome.tls=true"
+      - "traefik.http.routers.adguardhome.middlewares=auth@file,secure-headers@file"
+      - "traefik.http.services.adguardhome.loadbalancer.server.port=3000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000" ]
       interval: 30s
