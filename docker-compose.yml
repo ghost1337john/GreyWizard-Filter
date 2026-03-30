@@ -71,6 +71,7 @@ services:
     ports:
       - :53:53/tcp
       - :53:53/udp
+      - :3000:3000/tcp
       - "${ADGUARD_PORT:-3000}:${ADGUARD_PORT:-3000}/tcp" # Interface web accessible sur le port choisi
     volumes:
       - ./config/adguardhome/work:/opt/adguardhome/work
@@ -78,7 +79,7 @@ services:
     environment:
       - TZ=Europe/Paris
     # labels:
-    #   - "traefik.enable=true"
+    #   - "traefik.enable=true"S
     #   - "traefik.http.routers.adguardhome.rule=Host(`adguard.${TRAEFIK_DOMAIN:-lab.local}`)"
     #   - "traefik.http.routers.adguardhome.entrypoints=websecure"
     #   - "traefik.http.routers.adguardhome.tls=true"
