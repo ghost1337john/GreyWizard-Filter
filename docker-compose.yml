@@ -71,7 +71,7 @@ services:
     ports:
       - :53:53/tcp
       - :53:53/udp
-      - :3000:3000/tcp # Interface web accessible sur tout le réseau (Traefik peut faire le routage HTTPS)
+      - "${ADGUARD_PORT:-3000}:${ADGUARD_PORT:-3000}/tcp" # Interface web accessible sur le port choisi
     volumes:
       - ./config/adguardhome/work:/opt/adguardhome/work
       - ./config/adguardhome/conf:/opt/adguardhome/conf
@@ -85,7 +85,7 @@ services:
     #   - "traefik.http.routers.adguardhome.middlewares=auth@file,secure-headers@file"
     #   - "traefik.http.services.adguardhome.loadbalancer.server.port=3000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000" ]
+      test: ["CMD", "curl", "-f", "http://localhost:${ADGUARD_PORT:-3000}" ]
       interval: 30s
       timeout: 10s
       retries: 5
