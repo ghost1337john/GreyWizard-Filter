@@ -132,17 +132,9 @@ prepare_environment() {
 start_stack() {
   log_info "Démarrage de la stack lab.local..."
   cd "${SCRIPT_DIR}"
-
-  # Utilise le wrapper compose-up.sh pour gérer le choix DNS_ENGINE et profils
-  if [[ -x scripts/compose-up.sh ]]; then
-    bash scripts/compose-up.sh
-    log_success "Stack démarrée via compose-up.sh."
-  else
-    log_warn "scripts/compose-up.sh non trouvé ou non exécutable, fallback sur docker compose up -d."
-    ${COMPOSE_CMD} pull
-    ${COMPOSE_CMD} up -d --remove-orphans
-    log_success "Stack démarrée (mode fallback)."
-  fi
+  ${COMPOSE_CMD} pull
+  ${COMPOSE_CMD} up -d --remove-orphans
+  log_success "Stack démarrée."
 }
 
 # ── Résumé ───────────────────────────────────────────────────
