@@ -26,49 +26,49 @@ TRAEFIK_DOMAIN=${TRAEFIK_DOMAIN:-lab.local}
 read -rp "IP du serveur principal (ex: host1.$TRAEFIK_DOMAIN) [192.168.10.10] : " SERVER_IP
 SERVER_IP=${SERVER_IP:-192.168.10.10}
 
-# Saisie interactive du nombre de machines et de leurs infos
-echo "Combien de machines souhaitez-vous déclarer (ex : 3) ?"
-read -rp "Nombre de machines : " NB_MACHINES
+# # Saisie interactive du nombre de machines et de leurs infos
+# echo "Combien de machines souhaitez-vous déclarer (ex : 3) ?"
+# read -rp "Nombre de machines : " NB_MACHINES
 
-MACHINES_LABEL=()
-MACHINES_HOST=()
-MACHINES_IP=()
+# MACHINES_LABEL=()
+# MACHINES_HOST=()
+# MACHINES_IP=()
 
-for ((i=1; i<=NB_MACHINES; i++)); do
-  read -rp "Rôle ou label de la machine #$i (ex: Serveur principal, Passerelle, Hub) : " LABEL
-  MACHINES_LABEL+=("$LABEL")
-  read -rp "Nom d'hôte pour $LABEL (ex: host1, gw, media) : " HOST
-  MACHINES_HOST+=("$HOST")
-  read -rp "Adresse IP pour $HOST.$TRAEFIK_DOMAIN (ex: 192.168.10.$((10+i))) : " IP
-  MACHINES_IP+=("$IP")
-  # Détection serveur principal (premier label contenant 'serveur' ou 'principal')
-  if [[ -z "$SERVER_IP" && "$LABEL" =~ [Ss]erveur ]]; then
-    SERVER_IP=$IP
-  fi
-  echo "  $HOST.$TRAEFIK_DOMAIN → $IP ($LABEL)"
-done
+# for ((i=1; i<=NB_MACHINES; i++)); do
+#   read -rp "Rôle ou label de la machine #$i (ex: Serveur principal, Passerelle, Hub) : " LABEL
+#   MACHINES_LABEL+=("$LABEL")
+#   read -rp "Nom d'hôte pour $LABEL (ex: host1, gw, media) : " HOST
+#   MACHINES_HOST+=("$HOST")
+#   read -rp "Adresse IP pour $HOST.$TRAEFIK_DOMAIN (ex: 192.168.10.$((10+i))) : " IP
+#   MACHINES_IP+=("$IP")
+#   # Détection serveur principal (premier label contenant 'serveur' ou 'principal')
+#   if [[ -z "$SERVER_IP" && "$LABEL" =~ [Ss]erveur ]]; then
+#     SERVER_IP=$IP
+#   fi
+#   echo "  $HOST.$TRAEFIK_DOMAIN → $IP ($LABEL)"
+# done
 
-# Exporte les tableaux pour qu'ils soient utilisables dans install.sh
-declare -p MACHINES_HOST MACHINES_IP > config/adguardhome/conf/lab-machines.env
+# # Exporte les tableaux pour qu'ils soient utilisables dans install.sh
+# declare -p MACHINES_HOST MACHINES_IP > config/adguardhome/conf/lab-machines.env
 
-# Si pas de serveur principal détecté, prendre le premier IP
-if [[ -z "$SERVER_IP" ]]; then
-  SERVER_IP=${MACHINES_IP[0]}
-fi
+# # Si pas de serveur principal détecté, prendre le premier IP
+# if [[ -z "$SERVER_IP" ]]; then
+#   SERVER_IP=${MACHINES_IP[0]}
+# fi
 
-read -rp "Port d'administration AdGuard Home après installation [8080] : " ADGUARD_PORT
-ADGUARD_PORT=${ADGUARD_PORT:-8080}
+# read -rp "Port d'administration AdGuard Home après installation [8080] : " ADGUARD_PORT
+# ADGUARD_PORT=${ADGUARD_PORT:-8080}
 
-echo "# ============================================================" > .env
-echo "# Lab Example – Variables d'environnement" >> .env
-echo "# Généré automatiquement le $(date)" >> .env
-echo "# ============================================================" >> .env
-echo "" >> .env
+# echo "# ============================================================" > .env
+# echo "# Lab Example – Variables d'environnement" >> .env
+# echo "# Généré automatiquement le $(date)" >> .env
+# echo "# ============================================================" >> .env
+# echo "" >> .env
 
-echo "TZ=$TZ" >> .env
-echo "SERVER_IP=$SERVER_IP" >> .env
-echo "TRAEFIK_DOMAIN=$TRAEFIK_DOMAIN" >> .env
-echo "ADGUARD_PORT=$ADGUARD_PORT" >> .env
+# echo "TZ=$TZ" >> .env
+# echo "SERVER_IP=$SERVER_IP" >> .env
+# echo "TRAEFIK_DOMAIN=$TRAEFIK_DOMAIN" >> .env
+# echo "ADGUARD_PORT=$ADGUARD_PORT" >> .env
 
 
 echo "DNS_ENGINE=$DNS_ENGINE" >> .env
@@ -104,10 +104,10 @@ EOF
 echo -e "${GREEN}Fichier .env et config AdGuard Home générés avec succès !${NC}"
 cat .env
 
-echo -e "\n${YELLOW}Prochaines étapes recommandées :${NC}"
-echo "1) (Optionnel, si Traefik activé) Générer un hash bcrypt pour l'authentification Traefik :"
-echo "   echo \\$(htpasswd -nB admin) | sed -e 's/\\$/\\$\\$/g'"
-echo "2) Copier ce hash dans config/traefik/dynamic/middlewares.yml à la place du placeholder."
-echo "3) Lancer l'installation de la stack : sudo ./install.sh"
-echo "4) Pour plus d'infos, consultez le README.md."
+# echo -e "\n${YELLOW}Prochaines étapes recommandées :${NC}"
+# echo "1) (Optionnel, si Traefik activé) Générer un hash bcrypt pour l'authentification Traefik :"
+# echo "   echo \\$(htpasswd -nB admin) | sed -e 's/\\$/\\$\\$/g'"
+# echo "2) Copier ce hash dans config/traefik/dynamic/middlewares.yml à la place du placeholder."
+# echo "3) Lancer l'installation de la stack : sudo ./install.sh"
+# echo "4) Pour plus d'infos, consultez le README.md."
 echo -e "\n${RED}IMPORTANT : Le mot de passe admin par défaut d'AdGuard Home est 'admin'. Changez-le impérativement via l'interface web après la première connexion !${NC}"

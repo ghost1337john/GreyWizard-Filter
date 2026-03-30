@@ -203,44 +203,44 @@ adapt_adguardhome_config() {
   fi
 
 
-  # Génération et injection du bloc rewrites YAML sous dns:
-  if [[ -f config/adguardhome/conf/lab-machines.env ]]; then
-    source config/adguardhome/conf/lab-machines.env
-    REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
-    echo "rewrites:" > "$REWRITES_YAML"
-    for i in "${!MACHINES_HOST[@]}"; do
-      echo "  - domain: ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$REWRITES_YAML"
-      echo "    answer: ${MACHINES_IP[$i]}" >> "$REWRITES_YAML"
-      echo "    enabled: true" >> "$REWRITES_YAML"
-    done
-    log_success "Bloc rewrites YAML généré automatiquement."
-    # Injection dans dns: du AdGuardHome.yaml
-    if command -v yq >/dev/null 2>&1; then
-      yq -i 'del(.dns.rewrites)' "$yaml_path"
-      yq -i '(.dns.rewrites) = load("'"$REWRITES_YAML"'").rewrites' "$yaml_path"
-      log_success "Bloc rewrites injecté dans dns: via yq."
-    else
-      # Vérifie si la section dns: existe, sinon l'ajoute à la fin
-      if grep -q '^dns:' "$yaml_path"; then
-        # Supprime tout bloc rewrites existant sous dns:
-        sed -i '/^dns:/,/^[^ ]/ {/^  rewrites:/,/^  [^ ]/d}' "$yaml_path"
-        # Injecte le bloc rewrites juste après dns: avec la bonne indentation
-        awk -v r="$(sed 's/^/  /' "$REWRITES_YAML")" '/^dns:/ {print; print r; next} 1' "$yaml_path" > "$yaml_path.tmp" && mv "$yaml_path.tmp" "$yaml_path"
-        log_success "Bloc rewrites injecté dans dns: manuellement."
-      else
-        # Ajoute la section dns: à la fin avec le bloc rewrites indente
-        echo '' >> "$yaml_path"
-        echo 'dns:' >> "$yaml_path"
-        sed 's/^/  /' "$REWRITES_YAML" >> "$yaml_path"
-        log_success "Section dns: et bloc rewrites ajoutés à la fin du fichier."
-      fi
-    fi
-    # Suppression du fichier temporaire rewrites.yaml après injection
-    if [ -f "$REWRITES_YAML" ]; then
-      rm -f "$REWRITES_YAML"
-      log_info "Fichier temporaire $REWRITES_YAML supprimé."
-    fi
-  fi
+  # # Génération et injection du bloc rewrites YAML sous dns:
+  # if [[ -f config/adguardhome/conf/lab-machines.env ]]; then
+  #   source config/adguardhome/conf/lab-machines.env
+  #   REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
+  #   echo "rewrites:" > "$REWRITES_YAML"
+  #   for i in "${!MACHINES_HOST[@]}"; do
+  #     echo "  - domain: ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$REWRITES_YAML"
+  #     echo "    answer: ${MACHINES_IP[$i]}" >> "$REWRITES_YAML"
+  #     echo "    enabled: true" >> "$REWRITES_YAML"
+  #   done
+  #   log_success "Bloc rewrites YAML généré automatiquement."
+  #   # Injection dans dns: du AdGuardHome.yaml
+  #   if command -v yq >/dev/null 2>&1; then
+  #     yq -i 'del(.dns.rewrites)' "$yaml_path"
+  #     yq -i '(.dns.rewrites) = load("'"$REWRITES_YAML"'").rewrites' "$yaml_path"
+  #     log_success "Bloc rewrites injecté dans dns: via yq."
+  #   else
+  #     # Vérifie si la section dns: existe, sinon l'ajoute à la fin
+  #     if grep -q '^dns:' "$yaml_path"; then
+  #       # Supprime tout bloc rewrites existant sous dns:
+  #       sed -i '/^dns:/,/^[^ ]/ {/^  rewrites:/,/^  [^ ]/d}' "$yaml_path"
+  #       # Injecte le bloc rewrites juste après dns: avec la bonne indentation
+  #       awk -v r="$(sed 's/^/  /' "$REWRITES_YAML")" '/^dns:/ {print; print r; next} 1' "$yaml_path" > "$yaml_path.tmp" && mv "$yaml_path.tmp" "$yaml_path"
+  #       log_success "Bloc rewrites injecté dans dns: manuellement."
+  #     else
+  #       # Ajoute la section dns: à la fin avec le bloc rewrites indente
+  #       echo '' >> "$yaml_path"
+  #       echo 'dns:' >> "$yaml_path"
+  #       sed 's/^/  /' "$REWRITES_YAML" >> "$yaml_path"
+  #       log_success "Section dns: et bloc rewrites ajoutés à la fin du fichier."
+  #     fi
+  #   fi
+  #   # Suppression du fichier temporaire rewrites.yaml après injection
+  #   if [ -f "$REWRITES_YAML" ]; then
+  #     rm -f "$REWRITES_YAML"
+  #     log_info "Fichier temporaire $REWRITES_YAML supprimé."
+  #   fi
+  # fi
 
   if command -v yq >/dev/null 2>&1; then
     yq -i '.http.address = "0.0.0.0:" + strenv(ADGUARD_PORT)' "$yaml_path"
