@@ -57,9 +57,6 @@ La stack Docker tourne sur le serveur principal défini lors de l'installation (
 ## Démarrage rapide
 
 ```bash
-git clone https://github.com/ghost1337john/GreyWizard-Filter.git
-cd GreyWizard-Filter
-
 # 1. Cloner le dépôt
 git clone https://github.com/ghost1337john/GreyWizard-Filter.git
 cd GreyWizard-Filter
