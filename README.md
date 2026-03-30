@@ -72,8 +72,9 @@ sudo bash ./install.sh
 
 
 
+
 # 5. Démarrer la stack
-sudo bash ./scripts/compose-up.sh
+sudo docker compose up -d
 
 > ⚠️ **Important** : Ne lancez pas `compose-up.sh` avant `install.sh` !
 > Le script d'installation prépare l'environnement, crée les dossiers et fichiers nécessaires, et vérifie la configuration. Si vous inversez l'ordre, la stack risque de ne pas démarrer correctement ou d'être incomplète.
