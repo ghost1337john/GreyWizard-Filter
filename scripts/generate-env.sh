@@ -68,7 +68,7 @@ ADGUARD_PORT=${ADGUARD_PORT:-8080}
 # echo "TZ=$TZ" >> .env
 # echo "SERVER_IP=$SERVER_IP" >> .env
 # echo "TRAEFIK_DOMAIN=$TRAEFIK_DOMAIN" >> .env
-# echo "ADGUARD_PORT=$ADGUARD_PORT" >> .env
+echo "ADGUARD_PORT=$ADGUARD_PORT" >> .env
 
 
 echo "DNS_ENGINE=$DNS_ENGINE" >> .env
