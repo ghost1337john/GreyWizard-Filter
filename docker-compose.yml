@@ -77,7 +77,7 @@ services:
       - ./config/adguardhome/work:/opt/adguardhome/work
       - ./config/adguardhome/conf:/opt/adguardhome/conf
     environment:
-      - TZ=${TZ:-Europe/Paris}
+      - TZ=Europe/Paris
     # labels:
     #   - "traefik.enable=true"
     #   - "traefik.http.routers.adguardhome.rule=Host(`adguard.${TRAEFIK_DOMAIN:-lab.local}`)"
@@ -106,7 +106,7 @@ services:
       - ./config/squid/squid.conf:/etc/squid/squid.conf:ro
       - squid_cache:/var/spool/squid
     environment:
-      - TZ=${TZ:-Europe/Paris}
+      - TZ=Europe/Paris
     labels:
       - "traefik.enable=false"
     healthcheck:
