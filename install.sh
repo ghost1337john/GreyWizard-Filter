@@ -132,12 +132,27 @@ prepare_environment() {
 }
 
 # ── Démarrage de la stack ────────────────────────────────────
+
 start_stack() {
   log_info "Démarrage de la stack lab.local..."
   cd "${SCRIPT_DIR}"
   ${COMPOSE_CMD} pull
   ${COMPOSE_CMD} up -d --remove-orphans
   log_success "Stack démarrée."
+
+  # Attendre la génération du fichier AdGuardHome.yaml (max 30s)
+  local yaml_path="config/adguardhome/conf/AdGuardHome.yaml"
+  local waited=0
+  local timeout=30
+  while [[ ! -f "$yaml_path" && $waited -lt $timeout ]]; do
+    log_info "En attente de la génération de $yaml_path par AdGuard Home... ($waited/$timeout s)"
+    sleep 2
+    waited=$((waited+2))
+  done
+  if [[ ! -f "$yaml_path" ]]; then
+    log_error "Le fichier $yaml_path n'a pas été généré après $timeout secondes. Vérifiez les logs du conteneur adguardhome (docker logs adguardhome)."
+    exit 1
+  fi
 }
 
 # ── Résumé ───────────────────────────────────────────────────
