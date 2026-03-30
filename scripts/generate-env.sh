@@ -82,7 +82,7 @@ cat > config/squid/squid.conf <<EOF
 # ============================================================
 # Squid – Configuration proxy HTTP/HTTPS
 # Lab     : $TRAEFIK_DOMAIN
-# Hôte    : ${MACHINES_HOST[0]}.$TRAEFIK_DOMAIN – $SERVER_IP
+# Hôte    : $SERVER_IP.$TRAEFIK_DOMAIN – $SERVER_IP
 # Réseau  : $(echo $SERVER_IP | awk -F. '{print $1 "." $2 "." $3 ".0/24"}')
 # ============================================================
 
