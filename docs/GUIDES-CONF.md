@@ -4,27 +4,6 @@ Ce document regroupe des guides pratiques pour configurer chaque service de la s
 
 ---
 
-## Pi-hole (interface web)
-
-### Accès
-- URL : https://pihole.<domaine>/admin
-- Authentification : login avec le mot de passe défini dans `.env` (PIHOLE_WEBPASSWORD)
-
-### Exemples de configuration
-- **Ajouter une liste noire personnalisée** :
-  1. Menu « Group Management » > « Adlists »
-  2. Coller l’URL de la liste, cliquer sur « Add »
-  3. Mettre à jour les listes (« Update Gravity »)
-- **Ajouter un domaine à bloquer** :
-  1. Menu « Blacklist »
-  2. Entrer le domaine, cliquer sur « Add »
-- **Autoriser un domaine** :
-  1. Menu « Whitelist »
-  2. Entrer le domaine, cliquer sur « Add »
-- **Voir les requêtes DNS** :
-  1. Menu « Query Log »
-
----
 
 ## AdGuard Home (interface web)
 
