@@ -57,19 +57,27 @@ La stack Docker tourne sur le serveur principal défini lors de l'installation (
 ## Démarrage rapide
 
 ```bash
-# 1. Cloner le dépôt
+git clone https://github.com/ghost1337john/GreyWizard-Filter.git
+cd GreyWizard-Filter
 
+# 1. Cloner le dépôt
 git clone https://github.com/ghost1337john/GreyWizard-Filter.git
 cd GreyWizard-Filter
 
 # 2. Préparer l'environnement système (Docker, outils, etc.)
-sudo ./scripts/bootstrap-prereqs.sh
+sudo bash ./scripts/bootstrap-prereqs.sh
 
 # 3. Générer la configuration interactive
-./scripts/generate-env.sh
+sudo bash ./scripts/generate-env.sh
 
-# 4. Installer et démarrer la stack
-sudo ./install.sh
+# 4. Installer la stack
+sudo bash ./install.sh
+
+# 5. Démarrer la stack selon votre choix DNS (Pi-hole ou AdGuard Home)
+# (Ce script active le bon service selon la variable DNS_ENGINE de votre .env)
+sudo bash ./scripts/compose-up.sh
+
+> ℹ️ **Astuce** : Utilisez toujours `sudo bash ...` pour éviter les problèmes de droits lors de l'installation et du lancement des scripts.
 ```
 
 ## Procedure automatisee des prerequis

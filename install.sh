@@ -33,8 +33,11 @@ log_error()   { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 
 # ── Bannière ─────────────────────────────────────────────────
 print_banner() {
+  DOMAIN="${TRAEFIK_DOMAIN:-lab.local}"
+  SERVER_IP="${SERVER_IP:-192.168.1.3}"
+  HOSTNAME="${HOSTNAME:-host1}"
   echo "  GreyWizard-Filter – Pi-hole + Squid + Traefik"
-  echo "  Hôte : host1.lab.local (192.168.10.10)"
+  echo "  Hôte : $HOSTNAME.$DOMAIN ($SERVER_IP)"
   echo "  ─────────────────────────────────────────────────────────────────"
   echo ""
 }
