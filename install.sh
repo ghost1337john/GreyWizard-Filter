@@ -199,13 +199,15 @@ adapt_adguardhome_config() {
     exit 1
   fi
 
+
   if command -v yq >/dev/null 2>&1; then
-    yq -i '.bind_port = env(ADGUARD_PORT)' "$yaml_path"
+    yq -i '.http.address = "0.0.0.0:" + strenv(ADGUARD_PORT)' "$yaml_path"
   else
-    sed -i "s|^bind_port:.*|bind_port: $ADGUARD_PORT|" "$yaml_path"
+    # Remplace la ligne address: ... dans la section http:
+    sed -i "/^http:/,/^[^ ]/ s|^\( *address: \).*|\1 0.0.0.0:$ADGUARD_PORT|" "$yaml_path"
   fi
 
-  log_success "Configuration AdGuard Home adaptée (port)."
+  log_success "Configuration AdGuard Home adaptée (http.address)."
 
   # Redémarrage du conteneur pour prise en compte
   if docker ps | grep -q adguardhome; then
