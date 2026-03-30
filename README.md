@@ -1,6 +1,7 @@
 
 > ⚠️ **DISCLAIMER : Ce projet est en phase de test. Il peut contenir des bugs, des fonctionnalités incomplètes ou instables. Utilisation à vos risques et périls !**
 
+
 # GreyWizard-Filter : la stack de filtrage et reverse proxy adaptable à tout lab ou réseau local
 
 ---
@@ -30,6 +31,7 @@ Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des fo
 
 - **AdGuard Home** : Fournit la résolution DNS locale pour tout le réseau et bloque la publicité/les trackers.
     - Interface web sur https://adguard.lab.local
+    - Les entrées DNS locales (machines du lab) sont injectées automatiquement dans la section `rewrites:` de la configuration AdGuard Home lors de l'installation, pour une résolution locale sans intervention manuelle.
 - **Squid** : Sert de proxy HTTP/HTTPS pour les clients du réseau. Il permet le cache, l’anonymisation et le filtrage DNS des requêtes web. Les clients peuvent configurer leur navigateur ou OS pour passer par Squid.
 - **Traefik** : Reverse proxy qui gère le routage HTTPS, la terminaison TLS (certificats auto-signés ou mkcert), l’accès sécurisé aux interfaces web (dashboard Traefik, AdGuard admin) et l’application de middlewares (authentification, headers, etc.).
 
@@ -65,6 +67,7 @@ cd GreyWizard-Filter
 # 2. Préparer l'environnement système (Docker, outils, etc.)
 sudo bash ./scripts/bootstrap-prereqs.sh
 
+
 # 3. Générer la configuration interactive
 sudo bash ./scripts/generate-env.sh
 
@@ -80,7 +83,7 @@ sudo bash ./install.sh
 #    et terminez l'assistant d'installation web AdGuard Home (choix du mot de passe admin, etc.).
 #    Laissez le script attendre ou relancez ./install.sh après l'installation web.
 
-# 8. Relancez l'installation pour appliquer automatiquement le port choisi dans .env :
+# 8. Relancez l'installation pour appliquer automatiquement le port choisi dans .env et injecter les entrées DNS locales dans la section rewrites :
 sudo bash ./install.sh
 
 # 9. (Optionnel) Redémarrez la stack si besoin :
@@ -109,6 +112,25 @@ Notes :
 - Le script gere Ubuntu/Debian, Fedora/RHEL-like et Arch Linux.
 - Sur Ubuntu, si le port 53 est deja pris par systemd-resolved, desactive-le avant le deploiement.
 - Si ton utilisateur est ajoute au groupe docker, reconnecte-toi pour que le groupe soit applique.
+
+---
+
+
+## Résolution DNS locale automatisée
+
+Lors de la génération de l'environnement, les machines déclarées sont automatiquement ajoutées dans la section `rewrites:` de la configuration AdGuard Home (`AdGuardHome.yaml`). Cela permet une résolution locale immédiate de tous les hôtes du lab, sans configuration manuelle dans l'interface web.
+
+Exemple généré :
+
+```yaml
+rewrites:
+    - domain: host1.lab.local
+        answer: 192.168.10.10
+        enabled: true
+    - domain: passerelle.lab.local
+        answer: 192.168.10.1
+        enabled: true
+```
 
 ---
 

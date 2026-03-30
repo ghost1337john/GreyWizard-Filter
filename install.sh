@@ -10,22 +10,22 @@
           echo -e '\ndns:\n  rewrites:\n    enabled: true' >> "$yaml_path"
         fi
       fi
-    # Copier le fichier lab.conf dans le dossier conf d'AdGuard Home si généré par generate-env.sh
-    if [ -f config/dnsmasq/lab.conf ]; then
-      cp config/dnsmasq/lab.conf config/adguardhome/conf/lab.conf
-      log_success "Fichier lab.conf copié dans config/adguardhome/conf/."
-    fi
 
-    # Ajouter l'inclusion du fichier hosts dans AdGuardHome.yaml (dns.local_hosts)
-    if command -v yq >/dev/null 2>&1; then
-      yq -i '.dns.local_hosts = ["/opt/adguardhome/conf/lab.conf"]' "$yaml_path"
-    else
-      # Ajout manuel si la section dns: existe déjà
-      if grep -q '^dns:' "$yaml_path"; then
-        sed -i '/^dns:/a\  local_hosts:\n    - /opt/adguardhome/conf/lab.conf' "$yaml_path"
+    # Injection du bloc rewrites généré dans AdGuardHome.yaml
+    REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
+    if [ -f "$REWRITES_YAML" ]; then
+      log_info "Injection des entrées rewrites dans AdGuardHome.yaml..."
+      if command -v yq >/dev/null 2>&1; then
+        # Supprime la section rewrites existante
+        yq -i 'del(.rewrites)' "$yaml_path"
+        # Ajoute les nouvelles entrées rewrites
+        yq -i '(. + load("'"$REWRITES_YAML"'"))' "$yaml_path"
+        log_success "Bloc rewrites injecté via yq."
       else
-        # Ajoute la section complète à la fin
-        echo -e '\ndns:\n  local_hosts:\n    - /opt/adguardhome/conf/lab.conf' >> "$yaml_path"
+        # Méthode manuelle : supprime l'ancien bloc rewrites et ajoute le nouveau à la fin
+        sed -i '/^rewrites:/,/^\s*[^- ]/d' "$yaml_path"
+        cat "$REWRITES_YAML" >> "$yaml_path"
+        log_success "Bloc rewrites injecté manuellement."
       fi
     fi
   # Correction des permissions sur les dossiers AdGuard Home

@@ -81,14 +81,18 @@ mkdir -p config/adguardhome/work config/adguardhome/conf
 echo "Ce dossier contiendra les fichiers de configuration et de travail d'AdGuard Home.\nLes fichiers seront générés automatiquement par AdGuard Home au premier lancement.\nVous pouvez y placer vos propres fichiers de config si besoin." > config/adguardhome/README.txt
 
 
-# Génération du fichier hosts local pour AdGuard Home
-DNS_CONFIG_PATH="config/dnsmasq/lab.conf"
-mkdir -p config/dnsmasq
-echo "# Fichier hosts généré automatiquement pour AdGuard Home" > "$DNS_CONFIG_PATH"
+
+# Génération du bloc rewrites YAML pour AdGuard Home
+REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
+mkdir -p config/adguardhome/conf
+echo "# Bloc rewrites généré automatiquement pour AdGuard Home" > "$REWRITES_YAML"
+echo "rewrites:" >> "$REWRITES_YAML"
 for i in "${!MACHINES_HOST[@]}"; do
-  echo "${MACHINES_IP[$i]} ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$DNS_CONFIG_PATH"
+  echo "  - domain: ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$REWRITES_YAML"
+  echo "    answer: ${MACHINES_IP[$i]}" >> "$REWRITES_YAML"
+  echo "    enabled: true" >> "$REWRITES_YAML"
 done
-echo "# Vérifiez et validez ces enregistrements avant déploiement !" >> "$DNS_CONFIG_PATH"
+echo "# Vérifiez et validez ces enregistrements avant déploiement !" >> "$REWRITES_YAML"
 
 # Génération dynamique de config/squid/squid.conf
 cat > config/squid/squid.conf <<EOF
