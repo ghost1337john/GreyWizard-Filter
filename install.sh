@@ -1,3 +1,21 @@
+    # Copier le fichier lab.conf dans le dossier conf d'AdGuard Home si généré par generate-env.sh
+    if [ -f config/dnsmasq/lab.conf ]; then
+      cp config/dnsmasq/lab.conf config/adguardhome/conf/lab.conf
+      log_success "Fichier lab.conf copié dans config/adguardhome/conf/."
+    fi
+
+    # Ajouter l'inclusion du fichier hosts dans AdGuardHome.yaml (dns.local_hosts)
+    if command -v yq >/dev/null 2>&1; then
+      yq -i '.dns.local_hosts = ["/opt/adguardhome/conf/lab.conf"]' "$yaml_path"
+    else
+      # Ajout manuel si la section dns: existe déjà
+      if grep -q '^dns:' "$yaml_path"; then
+        sed -i '/^dns:/a\  local_hosts:\n    - /opt/adguardhome/conf/lab.conf' "$yaml_path"
+      else
+        # Ajoute la section complète à la fin
+        echo -e '\ndns:\n  local_hosts:\n    - /opt/adguardhome/conf/lab.conf' >> "$yaml_path"
+      fi
+    fi
   # Correction des permissions sur les dossiers AdGuard Home
   mkdir -p config/adguardhome/work config/adguardhome/conf
   chown -R 1000:1000 config/adguardhome/work config/adguardhome/conf || true
