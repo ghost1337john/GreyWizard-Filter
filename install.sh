@@ -204,6 +204,21 @@ start_stack() {
     log_error "Le fichier $yaml_path n'a pas été généré après $timeout secondes. Vérifiez les logs du conteneur adguardhome (docker logs adguardhome)."
     exit 1
   fi
+
+  # Charge les tableaux de machines générés par generate-env.sh
+  if [[ -f config/adguardhome/conf/lab-machines.env ]]; then
+    source config/adguardhome/conf/lab-machines.env
+    REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
+    echo "# Bloc rewrites généré automatiquement pour AdGuard Home" > "$REWRITES_YAML"
+    echo "rewrites:" >> "$REWRITES_YAML"
+    for i in "${!MACHINES_HOST[@]}"; do
+      echo "  - domain: ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$REWRITES_YAML"
+      echo "    answer: ${MACHINES_IP[$i]}" >> "$REWRITES_YAML"
+      echo "    enabled: true" >> "$REWRITES_YAML"
+    done
+    echo "# Vérifiez et validez ces enregistrements avant déploiement !" >> "$REWRITES_YAML"
+    log_success "Bloc rewrites YAML généré automatiquement."
+  fi
 }
 
 # ── Résumé ───────────────────────────────────────────────────

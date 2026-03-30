@@ -38,6 +38,7 @@ MACHINES_LABEL=()
 MACHINES_HOST=()
 MACHINES_IP=()
 
+
 for ((i=1; i<=NB_MACHINES; i++)); do
   read -rp "Rôle ou label de la machine #$i (ex: Serveur principal, Passerelle, Hub) : " LABEL
   MACHINES_LABEL+=("$LABEL")
@@ -51,6 +52,9 @@ for ((i=1; i<=NB_MACHINES; i++)); do
   fi
   echo "  $HOST.$TRAEFIK_DOMAIN → $IP ($LABEL)"
 done
+
+# Exporte les tableaux pour qu'ils soient utilisables dans install.sh
+declare -p MACHINES_HOST MACHINES_IP > config/adguardhome/conf/lab-machines.env
 
 # Si pas de serveur principal détecté, prendre le premier IP
 if [[ -z "$SERVER_IP" ]]; then
@@ -82,17 +86,6 @@ echo "Ce dossier contiendra les fichiers de configuration et de travail d'AdGuar
 
 
 
-# Génération du bloc rewrites YAML pour AdGuard Home
-REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
-mkdir -p config/adguardhome/conf
-echo "# Bloc rewrites généré automatiquement pour AdGuard Home" > "$REWRITES_YAML"
-echo "rewrites:" >> "$REWRITES_YAML"
-for i in "${!MACHINES_HOST[@]}"; do
-  echo "  - domain: ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$REWRITES_YAML"
-  echo "    answer: ${MACHINES_IP[$i]}" >> "$REWRITES_YAML"
-  echo "    enabled: true" >> "$REWRITES_YAML"
-done
-echo "# Vérifiez et validez ces enregistrements avant déploiement !" >> "$REWRITES_YAML"
 
 # Génération dynamique de config/squid/squid.conf
 cat > config/squid/squid.conf <<EOF
