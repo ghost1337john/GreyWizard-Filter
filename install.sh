@@ -221,16 +221,19 @@ adapt_adguardhome_config() {
       log_success "Bloc rewrites injecté dans dns: via yq."
     else
       # Vérifie si la section dns: existe, sinon l'ajoute à la fin
-      if ! grep -q '^dns:' "$yaml_path"; then
-        echo -e '\ndns:' >> "$yaml_path"
+      if grep -q '^dns:' "$yaml_path"; then
+        # Supprime tout bloc rewrites existant sous dns:
+        sed -i '/^dns:/,/^[^ ]/ {/^  rewrites:/,/^  [^ ]/d}' "$yaml_path"
+        # Injecte le bloc rewrites juste après dns: avec la bonne indentation
+        awk -v r="$(sed 's/^/  /' "$REWRITES_YAML")" '/^dns:/ {print; print r; next} 1' "$yaml_path" > "$yaml_path.tmp" && mv "$yaml_path.tmp" "$yaml_path"
+        log_success "Bloc rewrites injecté dans dns: manuellement."
+      else
+        # Ajoute la section dns: à la fin avec le bloc rewrites indente
+        echo '' >> "$yaml_path"
+        echo 'dns:' >> "$yaml_path"
+        sed 's/^/  /' "$REWRITES_YAML" >> "$yaml_path"
+        log_success "Section dns: et bloc rewrites ajoutés à la fin du fichier."
       fi
-      # Supprime tout bloc rewrites existant sous dns:
-      sed -i '/^dns:/,/^[^ ]/ {/^  rewrites:/,/^  [^ ]/d}' "$yaml_path"
-      # Injecte le bloc rewrites juste après dns: avec la bonne indentation
-      awk -v r="$(sed 's/^/  /' "$REWRITES_YAML")" '
-        /^dns:/ {print; print r; next} 1
-      ' "$yaml_path" > "$yaml_path.tmp" && mv "$yaml_path.tmp" "$yaml_path"
-      log_success "Bloc rewrites injecté dans dns: manuellement."
     fi
     # Suppression du fichier temporaire rewrites.yaml après injection
     if [ -f "$REWRITES_YAML" ]; then
