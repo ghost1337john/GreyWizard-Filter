@@ -110,7 +110,7 @@ services:
     # labels:
     #   - "traefik.enable=false"
     healthcheck:
-      test: ["CMD-SHELL", "squidclient -h 127.0.0.1 mgr:info > /dev/null 2>&1 || exit 1"]
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:${SQUID_PORT:-3128} || curl -f http://localhost:3128 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
