@@ -56,8 +56,8 @@ SERVER_IP=${SERVER_IP:-192.168.10.10}
 #   SERVER_IP=${MACHINES_IP[0]}
 # fi
 
-# read -rp "Port d'administration AdGuard Home après installation [8080] : " ADGUARD_PORT
-# ADGUARD_PORT=${ADGUARD_PORT:-8080}
+read -rp "Port d'administration AdGuard Home après installation [8080] : " ADGUARD_PORT
+ADGUARD_PORT=${ADGUARD_PORT:-8080}
 
 # echo "# ============================================================" > .env
 # echo "# Lab Example – Variables d'environnement" >> .env
