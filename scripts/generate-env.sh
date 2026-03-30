@@ -71,7 +71,14 @@ echo "SERVER_IP=$SERVER_IP" >> .env
 echo "TRAEFIK_DOMAIN=$TRAEFIK_DOMAIN" >> .env
 echo "ADGUARD_PORT=$ADGUARD_PORT" >> .env
 
+
 echo "DNS_ENGINE=$DNS_ENGINE" >> .env
+
+# Réinitialisation du dossier work d'AdGuard Home pour forcer la prise en compte du mot de passe admin
+if [ -d config/adguardhome/work ]; then
+  echo -e "${YELLOW}Suppression du dossier config/adguardhome/work pour réinitialiser AdGuard Home...${NC}"
+  rm -rf config/adguardhome/work
+fi
 mkdir -p config/adguardhome/work
 mkdir -p config/adguardhome/conf
 # Place un fichier README pour guider l'utilisateur
