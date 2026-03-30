@@ -37,23 +37,23 @@ print_banner() {
   echo "             ____"
   echo "           .'* *.'"
   echo "        __/_*_*(_"
-  echo "       / _______ \
-  echo "      _\_)/___\\_/_"
-  echo "     / _((\- -/))_ \
-  echo "     \ \())(-)(()/ /
-  echo "      ' \(((()))/ '
-  echo "     / ' \)).))/ ' \
-  echo "    / _ \ - | - /_  \
-  echo "   (   ( .;''';. .'  )
-  echo "   _\"__ /    )\ __"/_
-  echo "     \/  \   ' /  \/
-  echo "      .'  '...' ' )
-  echo "       / /  |  \ \
-  echo "      / .   .   . \
-  echo "     /   .     .   \
-  echo "    /   /   |   \   \
-  echo "  .'   /    b    '.  '.
-  echo " _.-'    /     \   `"-._
+  echo "       / _______ \\" 
+  echo "      _\\_)/___\\\\_/_"
+  echo "     / _((\\- -/))_ \\" 
+  echo "     \\ \\())(-)(()/ /"
+  echo "      ' \\(((()))/ '"
+  echo "     / ' \\)).))/ ' \\" 
+  echo "    / _ \\ - | - /_  \\" 
+  echo "   (   ( .;''';. .'  )"
+  echo "   _\\"__ /    )\\ __"/_"
+  echo "     \\/  \\   ' /  \\/"
+  echo "      .'  '...' ' )"
+  echo "       / /  |  \\ \\" 
+  echo "      / .   .   . \\" 
+  echo "     /   .     .   \\" 
+  echo "    /   /   |   \\   \\" 
+  echo "  .'   /    b    '.  '."
+  echo " _.-'    /     \\   \\"-._"
   echo -e "${NC}"
   echo "  GreyWizard-Filter – Pi-hole + Squid + Traefik"
   echo "  Hôte : host1.lab.local (192.168.10.10)"
