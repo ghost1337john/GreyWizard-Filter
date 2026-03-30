@@ -48,6 +48,9 @@ for i in ${!MACHINES[@]}; do
   echo "  $HOST.$TRAEFIK_DOMAIN → $IP"
 done
 
+read -rp "Port d'administration AdGuard Home après installation [8080] : " ADGUARD_PORT
+ADGUARD_PORT=${ADGUARD_PORT:-8080}
+
 echo "# ============================================================" > .env
 echo "# Lab Example – Variables d'environnement" >> .env
 echo "# Généré automatiquement le $(date)" >> .env
@@ -57,6 +60,7 @@ echo "" >> .env
 echo "TZ=$TZ" >> .env
 echo "SERVER_IP=$SERVER_IP" >> .env
 echo "TRAEFIK_DOMAIN=$TRAEFIK_DOMAIN" >> .env
+echo "ADGUARD_PORT=$ADGUARD_PORT" >> .env
 
 echo "DNS_ENGINE=$DNS_ENGINE" >> .env
 mkdir -p config/adguardhome/work
@@ -118,5 +122,14 @@ for i in ${!MACHINES_HOST[@]}; do
   echo "${MACHINES_IP[$i]}   ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN   ${MACHINES_HOST[$i]}" >> config/pihole/custom.list
 done
 
-echo -e "${GREEN}Fichier .env généré avec succès !${NC}"
+# Génération dynamique du fichier de config AdGuard Home
+cat > config/adguardhome/conf/AdGuardHome.yaml <<EOF
+bind_host: 0.0.0.0
+bind_port: $ADGUARD_PORT
+users:
+  - name: admin
+    password: changeme
+EOF
+
+echo -e "${GREEN}Fichier .env et config AdGuard Home générés avec succès !${NC}"
 cat .env
