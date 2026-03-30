@@ -143,11 +143,9 @@ print_summary() {
   DOMAIN="${TRAEFIK_DOMAIN:-lab.local}"
   SERVER_IP="${SERVER_IP:-192.168.1.3}"
   echo -e "${CYAN}${BOLD}  ── Services disponibles ──────────────────────────────────${NC}"
-  echo -e "  ${GREEN}Traefik dashboard${NC}  →  https://traefik.$DOMAIN"
-  # Pi-hole supprimé, ne rien afficher
-  echo -e "  ${GREEN}AdGuard Home${NC}       →  https://adguard.$DOMAIN  (ou http://$SERVER_IP:3000)"
+  echo -e "  ${GREEN}Traefik dashboard${NC}  →  https://traefik.${DOMAIN}"
+  echo -e "  ${GREEN}AdGuard Home${NC}       →  https://adguard.${DOMAIN}  (ou http://$SERVER_IP:$ADGUARD_PORT)"
   echo -e "  ${GREEN}Proxy Squid${NC}        →  $SERVER_IP:3128"
-  # DNS Pi-hole supprimé, ne rien afficher
   echo ""
   echo -e "  ${YELLOW}Configurez le DNS de vos clients vers $SERVER_IP${NC}"
   echo ""
