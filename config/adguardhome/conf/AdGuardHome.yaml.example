@@ -1,10 +1,17 @@
+
+# Configuration version : v1.0
 # Exemple de configuration AdGuard Home
 # Copiez ce fichier en AdGuardHome.yaml pour personnaliser la config
 # Voir la documentation officielle : https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration
 
 bind_host: 0.0.0.0
 bind_port: 3000
+
+# --- Authentification administrateur ---
 users:
   - name: admin
-    password: changeme
+    password: admin  # Mot de passe par défaut : "admin"
+# IMPORTANT : Changez impérativement ce mot de passe via l'interface web AdGuard Home après la première connexion !
+# (Menu Paramètres → Général → Utilisateurs)
+
 # ... autres options à compléter selon vos besoins ...
