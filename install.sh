@@ -118,20 +118,7 @@ prepare_environment() {
     log_success "Fichier .env existant trouvé"
   fi
 
-  # Vérification du mot de passe Pi-hole
-  if grep -q '^PIHOLE_WEBPASSWORD=changeme' .env; then
-    log_warn "PIHOLE_WEBPASSWORD est toujours sur la valeur par défaut !"
-    log_info "Vous devez définir un mot de passe admin Pi-hole."
-    read -rsp "Nouveau mot de passe Pi-hole (ne sera pas affiché) : " NEW_PWD
-    echo
-    if [[ -z "$NEW_PWD" ]]; then
-      log_error "Mot de passe vide, annulation."
-      exit 1
-    fi
-    # Remplacement dans .env
-    sed -i.bak "s/^PIHOLE_WEBPASSWORD=changeme/PIHOLE_WEBPASSWORD=$NEW_PWD/" .env
-    log_success "Mot de passe Pi-hole mis à jour dans .env."
-  fi
+
 
   # Vérification du hash auth Traefik
   if grep -q 'placeholder_replace_with_real_hash' config/traefik/dynamic/middlewares.yml; then
@@ -165,10 +152,10 @@ print_summary() {
   SERVER_IP="${SERVER_IP:-192.168.1.3}"
   echo -e "${CYAN}${BOLD}  ── Services disponibles ──────────────────────────────────${NC}"
   echo -e "  ${GREEN}Traefik dashboard${NC}  →  https://traefik.$DOMAIN"
-  echo -e "  ${GREEN}Pi-hole admin${NC}      →  https://pihole.$DOMAIN/admin"
+  # Pi-hole supprimé, ne rien afficher
   echo -e "  ${GREEN}AdGuard Home${NC}       →  https://adguard.$DOMAIN  (ou http://$SERVER_IP:3000)"
   echo -e "  ${GREEN}Proxy Squid${NC}        →  $SERVER_IP:3128"
-  echo -e "  ${GREEN}DNS Pi-hole${NC}        →  $SERVER_IP:53"
+  # DNS Pi-hole supprimé, ne rien afficher
   echo ""
   echo -e "  ${YELLOW}Configurez le DNS de vos clients vers $SERVER_IP${NC}"
   echo ""

@@ -11,7 +11,7 @@ Dans les terres numériques du LAN, là où les publicités et les trackers rôd
 
 Guidé par la sagesse de Gandalf, la force d'Aragorn et la lumière d'Eärendil, ce projet réunit trois artefacts légendaires :
 
-- **Pi-hole** (le Gardien du DNS) : repousse les armées de publicités et de malwares, filtrant les requêtes indésirables comme un bouclier elfique.
+- **AdGuard Home** (le Gardien du DNS) : repousse les armées de publicités et de malwares, filtrant les requêtes indésirables comme un bouclier elfique.
 - **Squid** (le Proxy Caméléon) : dissimule les traces des voyageurs du réseau, met en cache les savoirs, et détourne les regards indiscrets.
 - **Traefik** (le Passeur de Portails) : ouvre les portes sécurisées du royaume, distribue les certificats magiques et veille sur les accès aux tours de contrôle.
 
@@ -31,7 +31,7 @@ Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des fo
 - **AdGuard Home** : Fournit la résolution DNS locale pour tout le réseau et bloque la publicité/les trackers.
     - Interface web sur https://adguard.lab.local
 - **Squid** : Sert de proxy HTTP/HTTPS pour les clients du réseau. Il permet le cache, l’anonymisation et le filtrage DNS des requêtes web. Les clients peuvent configurer leur navigateur ou OS pour passer par Squid.
-- **Traefik** : Reverse proxy qui gère le routage HTTPS, la terminaison TLS (certificats auto-signés ou mkcert), l’accès sécurisé aux interfaces web (dashboard Traefik, Pi-hole/AdGuard admin) et l’application de middlewares (authentification, headers, etc.).
+- **Traefik** : Reverse proxy qui gère le routage HTTPS, la terminaison TLS (certificats auto-signés ou mkcert), l’accès sécurisé aux interfaces web (dashboard Traefik, AdGuard admin) et l’application de middlewares (authentification, headers, etc.).
 
 
 **Flux typique :**
@@ -122,8 +122,8 @@ lab-example/
 ├── install.sh               ← Installation automatisée
 ├── uninstall.sh             ← Désinstallation (--purge pour les volumes)
 ├── config/
-│   ├── pihole/
-│   │   └── custom.list      ← Enregistrements DNS locaux lab.local
+│   ├── adguardhome/
+│   │   └── custom.list      ← Enregistrements DNS locaux lab.local (si besoin)
 │   ├── squid/
 │   │   └── squid.conf       ← Configuration du proxy
 │   ├── traefik/
@@ -160,7 +160,7 @@ lab-example/
 
 ### 2. `scripts/deploy.sh`
 **But :** Déploie ou redémarre la stack du lab.
-- Vérifie la syntaxe des fichiers de configuration (Traefik, Squid, Pi-hole).
+- Vérifie la syntaxe des fichiers de configuration (Traefik, Squid, AdGuard Home).
 - Contrôle la cohérence du fichier `.env`.
 - Déploie ou redémarre uniquement les services modifiés.
 - Effectue des tests de santé post-déploiement.
@@ -193,7 +193,7 @@ Ajoutez dans `/etc/resolv.conf` (Linux) ou les paramètres réseau :
 nameserver 192.168.1.3
 ```
 
-Ou utilisez le fichier [config/hosts](config/hosts) sur les machines sans DNS Pi-hole.
+Ou utilisez le fichier [config/hosts](config/hosts) sur les machines sans DNS AdGuard Home.
 
 ### Option B — DHCP de gandalf
 
@@ -243,7 +243,7 @@ mkcert "*.lab.local" lab.local
 docker compose logs -f
 
 # Redémarrer un service
-docker compose restart pihole
+docker compose restart adguardhome
 
 # Désinstaller (sans supprimer les données)
 ./uninstall.sh
@@ -267,7 +267,7 @@ docker compose restart pihole
 
 ## 🔥 Important : Redirection DNS via le firewall/routeur
 
-Pour garantir que tout le trafic DNS du réseau soit filtré par Pi-hole ou AdGuard Home, il est fortement recommandé de configurer votre firewall/routeur pour :
+Pour garantir que tout le trafic DNS du réseau soit filtré par AdGuard Home, il est fortement recommandé de configurer votre firewall/routeur pour :
 
 - Rediriger toutes les requêtes DNS sortantes (port 53, TCP/UDP) vers l’IP du serveur où tourne la stack (variable SERVER_IP dans .env).
 - Bloquer l’accès direct à d’autres serveurs DNS publics depuis le LAN (optionnel mais conseillé).
@@ -295,7 +295,7 @@ Si vous choisissez AdGuard Home comme moteur DNS, les dossiers `config/adguardho
 
 ## Références
 
-- [Pi-hole documentation](https://docs.pi-hole.net/)
+- [AdGuard Home documentation](https://github.com/AdguardTeam/AdGuardHome/wiki)
 - [Squid configuration reference](https://www.squid-cache.org/Doc/config/)
 - [Traefik v3 documentation](https://doc.traefik.io/traefik/)
 - [mkcert](https://github.com/FiloSottile/mkcert)

@@ -109,18 +109,7 @@ request_timeout 60 seconds
 acl localnet src $(echo $SERVER_IP | awk -F. '{print $1 "." $2 "." $3 ".0/24"}')
 EOF
 
-# Génération dynamique de config/pihole/custom.list
-cat > config/pihole/custom.list <<EOF
-# ============================================================
-# Pi-hole – Résolutions DNS locales
-# Domaine   : $TRAEFIK_DOMAIN
-# Réseau    : $(echo $SERVER_IP | awk -F. '{print $1 "." $2 "." $3 ".0/24"}')
-# ============================================================
 
-EOF
-for i in ${!MACHINES_HOST[@]}; do
-  echo "${MACHINES_IP[$i]}   ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN   ${MACHINES_HOST[$i]}" >> config/pihole/custom.list
-done
 
 # Génération dynamique du fichier de config AdGuard Home
 cat > config/adguardhome/conf/AdGuardHome.yaml <<EOF

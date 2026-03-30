@@ -42,12 +42,6 @@ for svc in "${SERVICES[@]}"; do
   fi
 done
 
-# Test de résolution DNS via Pi-hole
-log_info "Test de résolution DNS via Pi-hole..."
-if dig @127.0.0.1 -p 53 google.com +short | grep -qE '^[0-9.]+'; then
-  log_success "Résolution DNS via Pi-hole OK."
-else
-  log_error "Échec de la résolution DNS via Pi-hole."; exit 1;
-fi
+
 
 log_success "Tous les tests automatisés sont terminés."

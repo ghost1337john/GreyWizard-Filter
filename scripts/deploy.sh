@@ -56,10 +56,7 @@ preflight_checks() {
   fi
   log_success ".env présent"
 
-  # Mot de passe Pi-hole par défaut
-  if grep -q 'PIHOLE_WEBPASSWORD=changeme' "${SCRIPT_DIR}/.env"; then
-    log_warn "PIHOLE_WEBPASSWORD est sur la valeur par défaut !"
-  fi
+
 
   # Hash basicAuth placeholder
   if grep -q 'placeholder_replace_with_real_hash' \
@@ -115,16 +112,7 @@ health_checks() {
     all_ok=false
   fi
 
-  # Pi-hole admin
-  if curl -sf http://127.0.0.1:8080/admin/ >/dev/null 2>&1; then
-    log_success "Pi-hole : OK"
-  else
-    log_warn "Pi-hole : ne répond pas encore"
-    all_ok=false
-  fi
 
-  # Résolution DNS via Pi-hole
-  if command -v dig &>/dev/null; then
     if dig +short host1.lab.local @127.0.0.1 | grep -q '192.168.10.10'; then
       log_success "DNS lab.local : résolution host1.lab.local → OK"
     else
