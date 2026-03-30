@@ -80,20 +80,15 @@ echo "DNS_ENGINE=$DNS_ENGINE" >> .env
 mkdir -p config/adguardhome/work config/adguardhome/conf
 echo "Ce dossier contiendra les fichiers de configuration et de travail d'AdGuard Home.\nLes fichiers seront générés automatiquement par AdGuard Home au premier lancement.\nVous pouvez y placer vos propres fichiers de config si besoin." > config/adguardhome/README.txt
 
-# Génération du fichier de configuration DNS à partir des tableaux
+
+# Génération du fichier hosts local pour AdGuard Home
 DNS_CONFIG_PATH="config/dnsmasq/lab.conf"
 mkdir -p config/dnsmasq
-echo "# Configuration version : v1.0" > "$DNS_CONFIG_PATH"
-echo "# ============================================================" >> "$DNS_CONFIG_PATH"
-echo "# dnsmasq – Enregistrements DNS générés automatiquement" >> "$DNS_CONFIG_PATH"
-echo "# Domaine : $TRAEFIK_DOMAIN" >> "$DNS_CONFIG_PATH"
-echo "# ============================================================" >> "$DNS_CONFIG_PATH"
-echo "" >> "$DNS_CONFIG_PATH"
+echo "# Fichier hosts généré automatiquement pour AdGuard Home" > "$DNS_CONFIG_PATH"
 for i in "${!MACHINES_HOST[@]}"; do
-  echo "address=/${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN/${MACHINES_IP[$i]}" >> "$DNS_CONFIG_PATH"
+  echo "${MACHINES_IP[$i]} ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$DNS_CONFIG_PATH"
 done
-echo "" >> "$DNS_CONFIG_PATH"
-echo "# Vérifiez et validez ces enregistrements DNS avant déploiement !" >> "$DNS_CONFIG_PATH"
+echo "# Vérifiez et validez ces enregistrements avant déploiement !" >> "$DNS_CONFIG_PATH"
 
 # Génération dynamique de config/squid/squid.conf
 cat > config/squid/squid.conf <<EOF
