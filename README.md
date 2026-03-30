@@ -70,9 +70,13 @@ sudo bash ./scripts/generate-env.sh
 # 4. Installer la stack
 sudo bash ./install.sh
 
+
 # 5. Démarrer la stack selon votre choix DNS (Pi-hole ou AdGuard Home)
 # (Ce script active le bon service selon la variable DNS_ENGINE de votre .env)
 sudo bash ./scripts/compose-up.sh
+
+> ⚠️ **Important** : Ne lancez pas `compose-up.sh` avant `install.sh` !
+> Le script d'installation prépare l'environnement, crée les dossiers et fichiers nécessaires, et vérifie la configuration. Si vous inversez l'ordre, la stack risque de ne pas démarrer correctement ou d'être incomplète.
 
 > ℹ️ **Astuce** : Utilisez toujours `sudo bash ...` pour éviter les problèmes de droits lors de l'installation et du lancement des scripts.
 ```
