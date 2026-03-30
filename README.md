@@ -61,16 +61,22 @@ La stack Docker tourne sur le serveur principal défini lors de l'installation (
 git clone https://github.com/ghost1337john/GreyWizard-Filter.git
 cd GreyWizard-Filter
 
+
 # 2. Préparer l'environnement système (Docker, outils, etc.)
 sudo bash ./scripts/bootstrap-prereqs.sh
 
 # 3. Générer la configuration interactive
 sudo bash ./scripts/generate-env.sh
 
-# 4. Installer la stack
+# 4. (Optionnel, si Traefik activé) Générer un hash bcrypt pour l'authentification Traefik :
+echo $(htpasswd -nB admin) | sed -e 's/\$/\$\$/g'
+
+# 5. Copier ce hash dans config/traefik/dynamic/middlewares.yml à la place du placeholder.
+
+# 6. Installer la stack
 sudo bash ./install.sh
 
-# 5. Démarrer la stack
+# 7. Démarrer la stack
 sudo docker compose up -d
 
 > ⚠️ **Important** : Ne lancez pas `compose-up.sh` avant `install.sh` !

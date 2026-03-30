@@ -193,14 +193,9 @@ print_versions() {
 
 print_next_steps() {
   echo ""
-  echo "Procedure lab.local :"
-  echo "1) cd ${SCRIPT_DIR}"
-  echo "2) cp .env.example .env"
-  echo "3) Modifier .env (PIHOLE_WEBPASSWORD, PIHOLE_DNS...)"
-  echo "4) Generer hash auth Traefik :"
-  echo "   echo \\$(htpasswd -nB admin) | sed -e 's/\\$/\\$\\$/g'"
-  echo "5) Coller le hash dans config/traefik/dynamic/middlewares.yml"
-  echo "6) Lancer la stack : sudo ./install.sh"
+  echo "Prérequis système installés."
+  echo "Passez à la génération du fichier .env et à l'installation du lab."
+  echo "Consultez le README ou lancez ./scripts/generate-env.sh pour continuer."
   echo ""
 }
 

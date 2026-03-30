@@ -122,3 +122,10 @@ EOF
 
 echo -e "${GREEN}Fichier .env et config AdGuard Home générés avec succès !${NC}"
 cat .env
+
+echo -e "\n${YELLOW}Prochaines étapes recommandées :${NC}"
+echo "1) (Optionnel, si Traefik activé) Générer un hash bcrypt pour l'authentification Traefik :"
+echo "   echo \\$(htpasswd -nB admin) | sed -e 's/\\$/\\$\\$/g'"
+echo "2) Copier ce hash dans config/traefik/dynamic/middlewares.yml à la place du placeholder."
+echo "3) Lancer l'installation de la stack : sudo ./install.sh"
+echo "4) Pour plus d'infos, consultez le README.md."
