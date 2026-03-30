@@ -203,28 +203,30 @@ adapt_adguardhome_config() {
   fi
 
 
-  # Génération et injection du bloc rewrites YAML
+  # Génération et injection du bloc rewrites YAML sous filtering:
   if [[ -f config/adguardhome/conf/lab-machines.env ]]; then
     source config/adguardhome/conf/lab-machines.env
     REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
-    echo "# Bloc rewrites généré automatiquement pour AdGuard Home" > "$REWRITES_YAML"
-    echo "rewrites:" >> "$REWRITES_YAML"
+    echo "rewrites:" > "$REWRITES_YAML"
     for i in "${!MACHINES_HOST[@]}"; do
       echo "  - domain: ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$REWRITES_YAML"
       echo "    answer: ${MACHINES_IP[$i]}" >> "$REWRITES_YAML"
       echo "    enabled: true" >> "$REWRITES_YAML"
     done
-    echo "# Vérifiez et validez ces enregistrements avant déploiement !" >> "$REWRITES_YAML"
     log_success "Bloc rewrites YAML généré automatiquement."
-    # Injection dans AdGuardHome.yaml
+    # Injection dans filtering: du AdGuardHome.yaml
     if command -v yq >/dev/null 2>&1; then
-      yq -i 'del(.rewrites)' "$yaml_path"
-      yq -i '(. + load("'"$REWRITES_YAML"'"))' "$yaml_path"
-      log_success "Bloc rewrites injecté via yq."
+      yq -i 'del(.filtering.rewrites)' "$yaml_path"
+      yq -i '(.filtering.rewrites) = load("'"$REWRITES_YAML"'").rewrites' "$yaml_path"
+      log_success "Bloc rewrites injecté dans filtering: via yq."
     else
-      sed -i '/^rewrites:/,/^\s*[^- ]/d' "$yaml_path"
-      cat "$REWRITES_YAML" >> "$yaml_path"
-      log_success "Bloc rewrites injecté manuellement."
+      # Supprime l’ancien bloc rewrites dans filtering:
+      sed -i '/^filtering:/,/^[^ ]/ {/^  rewrites:/,/^  [^ ]/d}' "$yaml_path"
+      # Ajoute le bloc rewrites juste après filtering:
+      awk -v r="$(cat "$REWRITES_YAML")" '
+        /^filtering:/ {print; print r; next} 1
+      ' "$yaml_path" > "$yaml_path.tmp" && mv "$yaml_path.tmp" "$yaml_path"
+      log_success "Bloc rewrites injecté dans filtering: manuellement."
     fi
     # Suppression du fichier temporaire rewrites.yaml après injection
     if [ -f "$REWRITES_YAML" ]; then
