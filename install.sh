@@ -41,7 +41,7 @@ print_banner() {
   DOMAIN="${TRAEFIK_DOMAIN:-lab.local}"
   SERVER_IP="${SERVER_IP:-192.168.1.3}"
   HOSTNAME="${HOSTNAME:-host1}"
-  echo "  GreyWizard-Filter – Pi-hole + Squid + Traefik"
+  echo "  GreyWizard-Filter – AdGuard Home + Squid + Traefik"
   echo "  Hôte : $HOSTNAME.$DOMAIN ($SERVER_IP)"
   echo "  ─────────────────────────────────────────────────────────────────"
   echo ""
@@ -128,12 +128,12 @@ prepare_environment() {
   [ -f .env ] && . .env
   set +a
 
-  # Vérification du hash auth Traefik
-  if grep -q 'placeholder_replace_with_real_hash' config/traefik/dynamic/middlewares.yml; then
-    log_warn "Le hash basicAuth Traefik est un placeholder !"
-    log_warn "Générez-en un via : echo \$(htpasswd -nB admin) | sed -e 's/\\\$/\\\$\\\$/g'"
-    log_warn "Puis mettez à jour config/traefik/dynamic/middlewares.yml"
-  fi
+  # # Vérification du hash auth Traefik
+  # if grep -q 'placeholder_replace_with_real_hash' config/traefik/dynamic/middlewares.yml; then
+  #   log_warn "Le hash basicAuth Traefik est un placeholder !"
+  #   log_warn "Générez-en un via : echo \$(htpasswd -nB admin) | sed -e 's/\\\$/\\\$\\\$/g'"
+  #   log_warn "Puis mettez à jour config/traefik/dynamic/middlewares.yml"
+  # fi
 }
 
 # ── Démarrage de la stack ────────────────────────────────────
@@ -196,7 +196,7 @@ print_summary() {
 # ── Main ─────────────────────────────────────────────────────
 adapt_adguardhome_config() {
   log_info "Adaptation de la configuration AdGuard Home (port, mot de passe admin)..."
-  local yaml_path="config/adguardhome/conf/dGuardHome.yaml"
+  local yaml_path="config/adguardhome/conf/AdGuardHome.yaml"
   if [[ ! -f "$yaml_path" ]]; then
     log_error "Le fichier $yaml_path n'existe pas après le premier démarrage. Vérifiez que le conteneur AdGuard Home a bien généré sa configuration."
     exit 1

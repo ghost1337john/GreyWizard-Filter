@@ -12,15 +12,12 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-
 echo -e "${BLUE}Génération interactive du fichier .env pour votre lab${NC}"
-
 
 DNS_ENGINE="adguardhome"
 
 read -rp "Fuseau horaire (ex: Europe/Paris) [Europe/Paris] : " TZ
 TZ=${TZ:-Europe/Paris}
-
 
 read -rp "Domaine DNS interne (ex: lab.local, maison) [lab.local] : " TRAEFIK_DOMAIN
 TRAEFIK_DOMAIN=${TRAEFIK_DOMAIN:-lab.local}
@@ -29,7 +26,6 @@ TRAEFIK_DOMAIN=${TRAEFIK_DOMAIN:-lab.local}
 read -rp "IP du serveur principal (ex: host1.$TRAEFIK_DOMAIN) [192.168.10.10] : " SERVER_IP
 SERVER_IP=${SERVER_IP:-192.168.10.10}
 
-
 # Saisie interactive du nombre de machines et de leurs infos
 echo "Combien de machines souhaitez-vous déclarer (ex : 3) ?"
 read -rp "Nombre de machines : " NB_MACHINES
@@ -37,7 +33,6 @@ read -rp "Nombre de machines : " NB_MACHINES
 MACHINES_LABEL=()
 MACHINES_HOST=()
 MACHINES_IP=()
-
 
 for ((i=1; i<=NB_MACHINES; i++)); do
   read -rp "Rôle ou label de la machine #$i (ex: Serveur principal, Passerelle, Hub) : " LABEL
@@ -78,14 +73,9 @@ echo "ADGUARD_PORT=$ADGUARD_PORT" >> .env
 
 echo "DNS_ENGINE=$DNS_ENGINE" >> .env
 
-
-
 # --- Préparation des dossiers AdGuard Home (statique) ---
 mkdir -p config/adguardhome/work config/adguardhome/conf
 echo "Ce dossier contiendra les fichiers de configuration et de travail d'AdGuard Home.\nLes fichiers seront générés automatiquement par AdGuard Home au premier lancement.\nVous pouvez y placer vos propres fichiers de config si besoin." > config/adguardhome/README.txt
-
-
-
 
 # Génération dynamique de config/squid/squid.conf
 cat > config/squid/squid.conf <<EOF
