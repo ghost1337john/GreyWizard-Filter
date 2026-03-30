@@ -1,33 +1,4 @@
-      # Ajout de l'option dns.rewrites.enabled: true
-      if command -v yq >/dev/null 2>&1; then
-        yq -i '.dns.rewrites.enabled = true' "$yaml_path"
-      else
-        # Ajout manuel si la section dns: existe déjà
-        if grep -q '^dns:' "$yaml_path"; then
-          sed -i '/^dns:/a\  rewrites:\n    enabled: true' "$yaml_path"
-        else
-          # Ajoute la section complète à la fin
-          echo -e '\ndns:\n  rewrites:\n    enabled: true' >> "$yaml_path"
-        fi
-      fi
 
-    # Injection du bloc rewrites généré dans AdGuardHome.yaml
-    REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
-    if [ -f "$REWRITES_YAML" ]; then
-      log_info "Injection des entrées rewrites dans AdGuardHome.yaml..."
-      if command -v yq >/dev/null 2>&1; then
-        # Supprime la section rewrites existante
-        yq -i 'del(.rewrites)' "$yaml_path"
-        # Ajoute les nouvelles entrées rewrites
-        yq -i '(. + load("'"$REWRITES_YAML"'"))' "$yaml_path"
-        log_success "Bloc rewrites injecté via yq."
-      else
-        # Méthode manuelle : supprime l'ancien bloc rewrites et ajoute le nouveau à la fin
-        sed -i '/^rewrites:/,/^\s*[^- ]/d' "$yaml_path"
-        cat "$REWRITES_YAML" >> "$yaml_path"
-        log_success "Bloc rewrites injecté manuellement."
-      fi
-    fi
   # Correction des permissions sur les dossiers AdGuard Home
   mkdir -p config/adguardhome/work config/adguardhome/conf
   chown -R 1000:1000 config/adguardhome/work config/adguardhome/conf || true
@@ -205,20 +176,7 @@ start_stack() {
     exit 1
   fi
 
-  # Charge les tableaux de machines générés par generate-env.sh
-  if [[ -f config/adguardhome/conf/lab-machines.env ]]; then
-    source config/adguardhome/conf/lab-machines.env
-    REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
-    echo "# Bloc rewrites généré automatiquement pour AdGuard Home" > "$REWRITES_YAML"
-    echo "rewrites:" >> "$REWRITES_YAML"
-    for i in "${!MACHINES_HOST[@]}"; do
-      echo "  - domain: ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$REWRITES_YAML"
-      echo "    answer: ${MACHINES_IP[$i]}" >> "$REWRITES_YAML"
-      echo "    enabled: true" >> "$REWRITES_YAML"
-    done
-    echo "# Vérifiez et validez ces enregistrements avant déploiement !" >> "$REWRITES_YAML"
-    log_success "Bloc rewrites YAML généré automatiquement."
-  fi
+
 }
 
 # ── Résumé ───────────────────────────────────────────────────
@@ -238,12 +196,42 @@ print_summary() {
 # ── Main ─────────────────────────────────────────────────────
 adapt_adguardhome_config() {
   log_info "Adaptation de la configuration AdGuard Home (port, mot de passe admin)..."
-  local yaml_path="config/adguardhome/conf/AdGuardHome.yaml"
+  local yaml_path="config/adguardhome/conf/dGuardHome.yaml"
   if [[ ! -f "$yaml_path" ]]; then
     log_error "Le fichier $yaml_path n'existe pas après le premier démarrage. Vérifiez que le conteneur AdGuard Home a bien généré sa configuration."
     exit 1
   fi
 
+
+  # Génération et injection du bloc rewrites YAML
+  if [[ -f config/adguardhome/conf/lab-machines.env ]]; then
+    source config/adguardhome/conf/lab-machines.env
+    REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
+    echo "# Bloc rewrites généré automatiquement pour AdGuard Home" > "$REWRITES_YAML"
+    echo "rewrites:" >> "$REWRITES_YAML"
+    for i in "${!MACHINES_HOST[@]}"; do
+      echo "  - domain: ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$REWRITES_YAML"
+      echo "    answer: ${MACHINES_IP[$i]}" >> "$REWRITES_YAML"
+      echo "    enabled: true" >> "$REWRITES_YAML"
+    done
+    echo "# Vérifiez et validez ces enregistrements avant déploiement !" >> "$REWRITES_YAML"
+    log_success "Bloc rewrites YAML généré automatiquement."
+    # Injection dans AdGuardHome.yaml
+    if command -v yq >/dev/null 2>&1; then
+      yq -i 'del(.rewrites)' "$yaml_path"
+      yq -i '(. + load("'"$REWRITES_YAML"'"))' "$yaml_path"
+      log_success "Bloc rewrites injecté via yq."
+    else
+      sed -i '/^rewrites:/,/^\s*[^- ]/d' "$yaml_path"
+      cat "$REWRITES_YAML" >> "$yaml_path"
+      log_success "Bloc rewrites injecté manuellement."
+    fi
+    # Suppression du fichier temporaire rewrites.yaml après injection
+    if [ -f "$REWRITES_YAML" ]; then
+      rm -f "$REWRITES_YAML"
+      log_info "Fichier temporaire $REWRITES_YAML supprimé."
+    fi
+  fi
 
   if command -v yq >/dev/null 2>&1; then
     yq -i '.http.address = "0.0.0.0:" + strenv(ADGUARD_PORT)' "$yaml_path"
