@@ -86,7 +86,7 @@ services:
     #   - "traefik.http.routers.adguardhome.middlewares=auth@file,secure-headers@file"
     #   - "traefik.http.services.adguardhome.loadbalancer.server.port=3000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${ADGUARD_PORT:-3000}" ]
+      test: ["CMD", "sh", "-c", "curl -f http://localhost:${ADGUARD_PORT:-3000} || curl -f http://localhost:3000 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5

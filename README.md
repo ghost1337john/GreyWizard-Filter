@@ -23,15 +23,18 @@ Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des fo
 
 | AdGuard Home | DNS               | Résolution locale + bloqueur publicitaire |
 | Squid        | Proxy HTTP/HTTPS  | Cache + anonymisation + filtrage DNS    |
-| Traefik      | Reverse Proxy     | Routage HTTPS, dashboard, middlewares   |
+| Traefik      | Reverse Proxy     | Routage HTTPS, dashboard, middlewares *(en test, intégration officielle dans une prochaine release)* |
 
 ---
+
+
+> **ℹ️ Note :** L'intégration de Traefik est actuellement en phase de test. Les autres services (AdGuard Home, Squid) sont stables et pleinement fonctionnels. Traefik sera officiellement intégré et documenté dans la prochaine release majeure du projet.
 
 ## Fonctionnement global des outils
 
 - **AdGuard Home** : Fournit la résolution DNS locale pour tout le réseau et bloque la publicité/les trackers.
     - Interface web sur https://adguard.lab.local
-    - Les entrées DNS locales (machines du lab) sont injectées automatiquement dans la section `rewrites:` de la configuration AdGuard Home lors de l'installation, pour une résolution locale sans intervention manuelle.
+    - Les entrées DNS locales (machines du lab) doivent être ajoutées manuellement dans la section `rewrites:` de la configuration AdGuard Home. L'injection automatique est désactivée temporairement suite à un bug.
 - **Squid** : Sert de proxy HTTP/HTTPS pour les clients du réseau. Il permet le cache, l’anonymisation et le filtrage DNS des requêtes web. Les clients peuvent configurer leur navigateur ou OS pour passer par Squid.
 - **Traefik** : Reverse proxy qui gère le routage HTTPS, la terminaison TLS (certificats auto-signés ou mkcert), l’accès sécurisé aux interfaces web (dashboard Traefik, AdGuard admin) et l’application de middlewares (authentification, headers, etc.).
 

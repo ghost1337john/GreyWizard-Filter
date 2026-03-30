@@ -1,3 +1,5 @@
+### 7. Pourquoi mes entrées DNS locales (rewrites) ne sont-elles plus injectées automatiquement dans AdGuard Home ?
+- Suite à un bug, l'injection automatique des entrées DNS locales (bloc rewrites) dans la configuration AdGuard Home a été désactivée temporairement. Il faut désormais ajouter manuellement vos entrées dans la section `rewrites:` du fichier `AdGuardHome.yaml`. Consultez le README pour un exemple de syntaxe.
 # Q : Pourquoi dois-je passer par l’assistant web AdGuard Home lors de l’installation ?
 
 R : Par sécurité, le mot de passe admin doit être choisi par l’utilisateur lors du premier lancement via l’assistant web (install.html). Le script d’installation adapte ensuite automatiquement le port d’administration selon votre .env, mais ne modifie plus le mot de passe. Il suffit de relancer `sudo ./install.sh` après avoir terminé l’assistant web.
