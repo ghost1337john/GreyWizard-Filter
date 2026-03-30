@@ -1,3 +1,7 @@
+  # Correction des permissions sur les dossiers AdGuard Home
+  mkdir -p config/adguardhome/work config/adguardhome/conf
+  chown -R 1000:1000 config/adguardhome/work config/adguardhome/conf || true
+  chmod 700 config/adguardhome/work config/adguardhome/conf || true
 #!/usr/bin/env bash#
 # ============================================================
 # Script d'installation de la stack
@@ -139,6 +143,23 @@ start_stack() {
   ${COMPOSE_CMD} pull
   ${COMPOSE_CMD} up -d --remove-orphans
   log_success "Stack démarrée."
+
+  # Pause et documentation pour l'installation web manuelle
+  local yaml_path="config/adguardhome/conf/AdGuardHome.yaml"
+  if [[ ! -f "$yaml_path" ]]; then
+    echo -e "\n${YELLOW}───────────────────────────────────────────────────────────────"
+    echo -e "${YELLOW}Première initialisation d'AdGuard Home${NC}"
+    echo -e "${YELLOW}Ouvrez votre navigateur sur http://$SERVER_IP:$ADGUARD_PORT${NC}"
+    echo -e "${YELLOW}Terminez l'assistant d'installation web (install.html) puis relancez :${NC}"
+    echo -e "${YELLOW}    sudo ./install.sh${NC}"
+    echo -e "${YELLOW}───────────────────────────────────────────────────────────────\n"
+    for i in {30..1}; do
+      echo -ne "Attente utilisateur : $i secondes restantes...\r"
+      sleep 1
+    done
+    echo -e "\n"
+    exit 0
+  fi
 
   # Attendre la génération du fichier AdGuardHome.yaml (max 30s)
   local yaml_path="config/adguardhome/conf/AdGuardHome.yaml"
