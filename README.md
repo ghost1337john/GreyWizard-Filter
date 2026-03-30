@@ -70,9 +70,6 @@ sudo bash ./scripts/generate-env.sh
 # 4. Installer la stack
 sudo bash ./install.sh
 
-
-
-
 # 5. Démarrer la stack
 sudo docker compose up -d
 
