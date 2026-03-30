@@ -155,12 +155,49 @@ print_summary() {
 }
 
 # ── Main ─────────────────────────────────────────────────────
+adapt_adguardhome_config() {
+  log_info "Adaptation de la configuration AdGuard Home (port, mot de passe admin)..."
+  local yaml_path="config/adguardhome/conf/AdGuardHome.yaml"
+  if [[ ! -f "$yaml_path" ]]; then
+    log_error "Le fichier $yaml_path n'existe pas après le premier démarrage. Vérifiez que le conteneur AdGuard Home a bien généré sa configuration."
+    exit 1
+  fi
+
+  ADMIN_USER="admin"
+  ADMIN_PASS="admin"
+  if command -v htpasswd >/dev/null 2>&1; then
+    ADMIN_HASH=$(htpasswd -B -C 10 -n -b "$ADMIN_USER" "$ADMIN_PASS" | cut -d: -f2)
+  else
+    log_warn "htpasswd non trouvé, le mot de passe sera en clair (non recommandé). Installez apache2-utils ou httpd-tools pour la génération automatique du hash bcrypt."
+    ADMIN_HASH="$ADMIN_PASS"
+  fi
+
+  if command -v yq >/dev/null 2>&1; then
+    yq -i \
+      '.bind_port = env(ADGUARD_PORT) | .users[0].name = env(ADMIN_USER) | .users[0].password = env(ADMIN_HASH)' \
+      "$yaml_path"
+  else
+    sed -i "s/^bind_port:.*/bind_port: $ADGUARD_PORT/" "$yaml_path"
+    sed -i "/^users:/,/^$/ {s/^\( *password: \).*/\1$ADMIN_HASH/}" "$yaml_path"
+  fi
+
+  log_success "Configuration AdGuard Home adaptée (port, mot de passe admin hashé)."
+
+  # Redémarrage du conteneur pour prise en compte
+  if docker ps | grep -q adguardhome; then
+    log_info "Redémarrage du conteneur adguardhome pour prise en compte de la configuration..."
+    ${COMPOSE_CMD} restart adguardhome
+    log_success "Conteneur adguardhome redémarré."
+  fi
+}
+
 main() {
   print_banner
   check_prerequisites
   check_ports
   prepare_environment
   start_stack
+  adapt_adguardhome_config
   print_summary
 }
 

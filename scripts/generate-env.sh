@@ -75,50 +75,10 @@ echo "ADGUARD_PORT=$ADGUARD_PORT" >> .env
 echo "DNS_ENGINE=$DNS_ENGINE" >> .env
 
 
-# --- Génération saine de la config AdGuard Home ---
-echo -e "${YELLOW}Suppression de toute ancienne configuration AdGuard Home...${NC}"
-rm -rf config/adguardhome/work config/adguardhome/conf/AdGuardHome.yaml
+
+# --- Préparation des dossiers AdGuard Home (statique) ---
 mkdir -p config/adguardhome/work config/adguardhome/conf
 echo "Ce dossier contiendra les fichiers de configuration et de travail d'AdGuard Home.\nLes fichiers seront générés automatiquement par AdGuard Home au premier lancement.\nVous pouvez y placer vos propres fichiers de config si besoin." > config/adguardhome/README.txt
-
-# Lancer temporairement AdGuard Home pour générer une config propre
-echo -e "${BLUE}Lancement temporaire du container AdGuard Home pour génération automatique de la configuration...${NC}"
-docker run --rm \
-  -v "$(pwd)/config/adguardhome/work:/opt/adguardhome/work" \
-  -v "$(pwd)/config/adguardhome/conf:/opt/adguardhome/conf" \
-  -e TZ="$TZ" \
-  adguard/adguardhome:latest --no-check-update --work-dir /opt/adguardhome/work --config /opt/adguardhome/conf/AdGuardHome.yaml --setup || {
-    echo -e "${RED}Erreur lors du lancement temporaire d'AdGuard Home. Vérifiez que Docker fonctionne.${NC}"
-    exit 1
-}
-echo -e "${GREEN}Configuration AdGuard Home générée automatiquement.${NC}"
-
-# Arrêt automatique car --rm
-
-# Modification sûre du YAML généré (port, hash admin)
-ADMIN_USER="admin"
-ADMIN_PASS="admin"
-if command -v htpasswd >/dev/null 2>&1; then
-  ADMIN_HASH=$(htpasswd -B -C 10 -n -b "$ADMIN_USER" "$ADMIN_PASS" | cut -d: -f2)
-else
-  echo -e "${YELLOW}htpasswd non trouvé, le mot de passe sera en clair (non recommandé). Installez apache2-utils ou httpd-tools pour la génération automatique du hash bcrypt.${NC}"
-  ADMIN_HASH="$ADMIN_PASS"
-fi
-
-# Utilisation de yq si dispo, sinon sed/awk
-if command -v yq >/dev/null 2>&1; then
-  yq -i \
-    '.bind_port = env(ADGUARD_PORT) | .users[0].name = env(ADMIN_USER) | .users[0].password = env(ADMIN_HASH)' \
-    config/adguardhome/conf/AdGuardHome.yaml
-else
-  # Fallback basique sed (suppose structure simple)
-  sed -i "s/^bind_port:.*/bind_port: $ADGUARD_PORT/" config/adguardhome/conf/AdGuardHome.yaml
-  sed -i "/^users:/,/^$/ {s/^\( *password: \).*/\1$ADMIN_HASH/}" config/adguardhome/conf/AdGuardHome.yaml
-fi
-
-echo -e "${GREEN}Configuration AdGuard Home adaptée (port, mot de passe admin hashé).${NC}"
-
-
 
 # Génération du fichier de configuration DNS à partir des tableaux
 DNS_CONFIG_PATH="config/dnsmasq/lab.conf"
