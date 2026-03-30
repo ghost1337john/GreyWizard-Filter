@@ -1,9 +1,9 @@
 ## ============================================================
 # Lab Example – docker-compose.yml
 #
-# Stack : Pi-hole (DNS + filtrage pub) +
-#         Squid   (proxy HTTP/HTTPS)   +
-#         Traefik (reverse proxy)
+# Stack : AdGuard Home (DNS + filtrage pub) +
+#         Squid        (proxy HTTP/HTTPS)   +
+#         Traefik      (reverse proxy, optionnel)
 #
 # Hôte           : host1.lab.local – 192.168.10.10
 # Domaine interne: lab.local
@@ -20,7 +20,7 @@ networks:
 
 volumes:
   squid_cache:
-  traefik_certs:
+  # traefik_certs:
 
 services:
 
@@ -77,13 +77,13 @@ services:
       - ./config/adguardhome/conf:/opt/adguardhome/conf
     environment:
       - TZ=Europe/Paris
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.adguardhome.rule=Host(`adguard.${TRAEFIK_DOMAIN:-lab.local}`)"
-      - "traefik.http.routers.adguardhome.entrypoints=websecure"
-      - "traefik.http.routers.adguardhome.tls=true"
-      - "traefik.http.routers.adguardhome.middlewares=auth@file,secure-headers@file"
-      - "traefik.http.services.adguardhome.loadbalancer.server.port=3000"
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.adguardhome.rule=Host(`adguard.${TRAEFIK_DOMAIN:-lab.local}`)"
+    #   - "traefik.http.routers.adguardhome.entrypoints=websecure"
+    #   - "traefik.http.routers.adguardhome.tls=true"
+    #   - "traefik.http.routers.adguardhome.middlewares=auth@file,secure-headers@file"
+    #   - "traefik.http.services.adguardhome.loadbalancer.server.port=3000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000" ]
       interval: 30s
@@ -106,8 +106,8 @@ services:
       - squid_cache:/var/spool/squid
     environment:
       - TZ=Europe/Paris
-    labels:
-      - "traefik.enable=false"
+    # labels:
+    #   - "traefik.enable=false"
     healthcheck:
       test: ["CMD-SHELL", "squidclient -h 127.0.0.1 mgr:info > /dev/null 2>&1 || exit 1"]
       interval: 30s
