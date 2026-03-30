@@ -180,13 +180,16 @@ start_stack() {
 # ── Résumé ───────────────────────────────────────────────────
 print_summary() {
   echo ""
+  DOMAIN="${TRAEFIK_DOMAIN:-lab.local}"
+  SERVER_IP="${SERVER_IP:-192.168.1.3}"
   echo -e "${CYAN}${BOLD}  ── Services disponibles ──────────────────────────────────${NC}"
-  echo -e "  ${GREEN}Traefik dashboard${NC}  →  https://traefik.lab.local"
-  echo -e "  ${GREEN}Pi-hole admin${NC}      →  https://pihole.lab.local/admin"
-  echo -e "  ${GREEN}Proxy Squid${NC}        →  192.168.1.3:3128"
-  echo -e "  ${GREEN}DNS Pi-hole${NC}        →  192.168.1.3:53"
+  echo -e "  ${GREEN}Traefik dashboard${NC}  →  https://traefik.$DOMAIN"
+  echo -e "  ${GREEN}Pi-hole admin${NC}      →  https://pihole.$DOMAIN/admin"
+  echo -e "  ${GREEN}AdGuard Home${NC}       →  https://adguard.$DOMAIN  (ou http://$SERVER_IP:3000)"
+  echo -e "  ${GREEN}Proxy Squid${NC}        →  $SERVER_IP:3128"
+  echo -e "  ${GREEN}DNS Pi-hole${NC}        →  $SERVER_IP:53"
   echo ""
-  echo -e "  ${YELLOW}Configurez le DNS de vos clients vers 192.168.1.3${NC}"
+  echo -e "  ${YELLOW}Configurez le DNS de vos clients vers $SERVER_IP${NC}"
   echo ""
 }
 

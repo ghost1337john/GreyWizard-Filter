@@ -32,11 +32,13 @@ done
 read -rp "Fuseau horaire (ex: Europe/Paris) [Europe/Paris] : " TZ
 TZ=${TZ:-Europe/Paris}
 
-read -rp "IP du serveur (host1.lab.local) [192.168.10.10] : " SERVER_IP
-SERVER_IP=${SERVER_IP:-192.168.10.10}
 
 read -rp "Domaine DNS interne (ex: lab.local, maison) [lab.local] : " TRAEFIK_DOMAIN
 TRAEFIK_DOMAIN=${TRAEFIK_DOMAIN:-lab.local}
+
+# Affichage plus clair pour l'IP du serveur principal
+read -rp "IP du serveur principal (ex: host1.$TRAEFIK_DOMAIN) [192.168.10.10] : " SERVER_IP
+SERVER_IP=${SERVER_IP:-192.168.10.10}
 
 # Machines clés à déclarer
 MACHINES=("passerelle" "hub" "serveur_docker")
