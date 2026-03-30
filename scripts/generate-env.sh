@@ -15,19 +15,8 @@ NC='\033[0m'
 
 echo -e "${BLUE}Génération interactive du fichier .env pour votre lab${NC}"
 
-# Choix du moteur DNS
-echo ""
-echo "Quel moteur DNS souhaitez-vous utiliser ?"
-select DNS_ENGINE in "pi-hole" "adguardhome"; do
-  case $DNS_ENGINE in
-    "pi-hole"|"adguardhome")
-      break
-      ;;
-    *)
-      echo "Choix invalide."
-      ;;
-  esac
-done
+
+DNS_ENGINE="adguardhome"
 
 read -rp "Fuseau horaire (ex: Europe/Paris) [Europe/Paris] : " TZ
 TZ=${TZ:-Europe/Paris}
@@ -68,20 +57,12 @@ echo "" >> .env
 echo "TZ=$TZ" >> .env
 echo "SERVER_IP=$SERVER_IP" >> .env
 echo "TRAEFIK_DOMAIN=$TRAEFIK_DOMAIN" >> .env
+
 echo "DNS_ENGINE=$DNS_ENGINE" >> .env
-
-if [[ "$DNS_ENGINE" == "pi-hole" ]]; then
-  echo "PIHOLE_WEBPASSWORD=$PIHOLE_WEBPASSWORD" >> .env
-  echo "PIHOLE_DNS=$PIHOLE_DNS" >> .env
-fi
-
-# Création des dossiers de config pour AdGuard Home si sélectionné
-if [[ "$DNS_ENGINE" == "adguardhome" ]]; then
-  mkdir -p config/adguardhome/work
-  mkdir -p config/adguardhome/conf
-  # Place un fichier README pour guider l'utilisateur
-  echo "Ce dossier contiendra les fichiers de configuration et de travail d'AdGuard Home.\nLes fichiers seront générés automatiquement par AdGuard Home au premier lancement.\nVous pouvez y placer vos propres fichiers de config si besoin." > config/adguardhome/README.txt
-fi
+mkdir -p config/adguardhome/work
+mkdir -p config/adguardhome/conf
+# Place un fichier README pour guider l'utilisateur
+echo "Ce dossier contiendra les fichiers de configuration et de travail d'AdGuard Home.\nLes fichiers seront générés automatiquement par AdGuard Home au premier lancement.\nVous pouvez y placer vos propres fichiers de config si besoin." > config/adguardhome/README.txt
 
 # Génération dynamique de config/dnsmasq/lab.conf
 cat > config/dnsmasq/lab.conf <<EOF

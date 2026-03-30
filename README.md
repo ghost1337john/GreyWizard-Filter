@@ -20,25 +20,25 @@ Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des fo
 ---
 
 
-| Pi-hole / AdGuard Home | DNS               | Résolution locale + bloqueur publicitaire |
-| Squid     | Proxy HTTP/HTTPS  | Cache + anonymisation + filtrage DNS    |
-| Traefik   | Reverse Proxy     | Routage HTTPS, dashboard, middlewares   |
+| AdGuard Home | DNS               | Résolution locale + bloqueur publicitaire |
+| Squid        | Proxy HTTP/HTTPS  | Cache + anonymisation + filtrage DNS    |
+| Traefik      | Reverse Proxy     | Routage HTTPS, dashboard, middlewares   |
 
 ---
 
 ## Fonctionnement global des outils
 
-- **Pi-hole** ou **AdGuard Home** : Fournit la résolution DNS locale pour tout le réseau et bloque la publicité/les trackers. Vous pouvez choisir l’un ou l’autre lors de l’installation (variable `DNS_ENGINE` dans `.env`).
-    - **Pi-hole** : Interface web sur https://pihole.lab.local/admin
-    - **AdGuard Home** : Interface web sur https://adguard.lab.local
+- **AdGuard Home** : Fournit la résolution DNS locale pour tout le réseau et bloque la publicité/les trackers.
+    - Interface web sur https://adguard.lab.local
 - **Squid** : Sert de proxy HTTP/HTTPS pour les clients du réseau. Il permet le cache, l’anonymisation et le filtrage DNS des requêtes web. Les clients peuvent configurer leur navigateur ou OS pour passer par Squid.
 - **Traefik** : Reverse proxy qui gère le routage HTTPS, la terminaison TLS (certificats auto-signés ou mkcert), l’accès sécurisé aux interfaces web (dashboard Traefik, Pi-hole/AdGuard admin) et l’application de middlewares (authentification, headers, etc.).
 
+
 **Flux typique :**
-- Un client configure son DNS sur Pi-hole ou AdGuard Home (IP définie dans le .env) et, s’il le souhaite, son proxy HTTP sur Squid (IP:port définis dans le .env).
-- Les requêtes DNS passent par le moteur choisi, qui filtre et résout localement ou en amont.
+- Un client configure son DNS sur AdGuard Home (IP définie dans le .env) et, s’il le souhaite, son proxy HTTP sur Squid (IP:port définis dans le .env).
+- Les requêtes DNS passent par AdGuard Home, qui filtre et résout localement ou en amont.
 - Les requêtes web passent par Squid, qui peut les filtrer, les cacher et les anonymiser.
-- Les accès aux interfaces web (admin Pi-hole/AdGuard, dashboard Traefik) passent par Traefik, qui applique HTTPS et l’authentification.
+- Les accès aux interfaces web (admin AdGuard, dashboard Traefik) passent par Traefik, qui applique HTTPS et l’authentification.
 
 ---
 
@@ -71,8 +71,8 @@ sudo bash ./scripts/generate-env.sh
 sudo bash ./install.sh
 
 
-# 5. Démarrer la stack selon votre choix DNS (Pi-hole ou AdGuard Home)
-# (Ce script active le bon service selon la variable DNS_ENGINE de votre .env)
+
+# 5. Démarrer la stack
 sudo bash ./scripts/compose-up.sh
 
 > ⚠️ **Important** : Ne lancez pas `compose-up.sh` avant `install.sh` !
@@ -106,12 +106,12 @@ Notes :
 | URL                                    | Service              | Auth requise |
 |----------------------------------------|----------------------|--------------|
 | https://traefik.lab.local              | Tableau de bord Traefik | Oui (basic) |
-| https://pihole.lab.local/admin         | Interface Pi-hole    | Oui (basic) |
-| `192.168.10.10:3128`                   | Proxy Squid          | Non (LAN)   |
-| `192.168.10.10:53`                     | DNS Pi-hole          | Non          |
+| https://adguard.lab.local              | Interface AdGuard Home  | Oui (basic) |
+| `192.168.10.10:3128`                   | Proxy Squid             | Non (LAN)   |
+| `192.168.10.10:53`                     | DNS AdGuard Home        | Non         |
 
 > **Note DNS** : pour résoudre les noms `*.lab.local`, configurez vos clients et
-> serveurs avec `192.168.10.10` comme serveur DNS primaire.
+> serveurs avec `192.168.10.10` comme serveur DNS primaire (géré par AdGuard Home).
 
 ---
 
