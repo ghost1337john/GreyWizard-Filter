@@ -220,9 +220,13 @@ adapt_adguardhome_config() {
       yq -i '(.dns.rewrites) = load("'"$REWRITES_YAML"'").rewrites' "$yaml_path"
       log_success "Bloc rewrites injecté dans dns: via yq."
     else
-      # Supprime l’ancien bloc rewrites dans dns:
+      # Vérifie si la section dns: existe, sinon l'ajoute à la fin
+      if ! grep -q '^dns:' "$yaml_path"; then
+        echo -e '\ndns:' >> "$yaml_path"
+      fi
+      # Supprime tout bloc rewrites existant sous dns:
       sed -i '/^dns:/,/^[^ ]/ {/^  rewrites:/,/^  [^ ]/d}' "$yaml_path"
-      # Ajoute le bloc rewrites juste après dns: avec la bonne indentation
+      # Injecte le bloc rewrites juste après dns: avec la bonne indentation
       awk -v r="$(sed 's/^/  /' "$REWRITES_YAML")" '
         /^dns:/ {print; print r; next} 1
       ' "$yaml_path" > "$yaml_path.tmp" && mv "$yaml_path.tmp" "$yaml_path"
