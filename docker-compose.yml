@@ -25,37 +25,37 @@ volumes:
 services:
 
   # ── Traefik – reverse proxy ──────────────────────────────────
-  traefik:
-    image: traefik:v3.3
-    container_name: traefik
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    networks:
-       - proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./config/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./config/traefik/dynamic:/etc/traefik/dynamic:ro
-      - traefik_certs:/certs
-    environment:
-      - TZ=${TZ:-Europe/Paris}
-    labels:
-      - "traefik.enable=true"
-      # Tableau de bord – accessible sur https://traefik.lab.local
-      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${TRAEFIK_DOMAIN:-lab.local}`)"
-      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
-      - "traefik.http.routers.traefik-dashboard.tls=true"
-      - "traefik.http.routers.traefik-dashboard.service=api@internal"
-      - "traefik.http.routers.traefik-dashboard.middlewares=auth@file,secure-headers@file"
-    healthcheck:
-      test: ["CMD", "traefik", "healthcheck", "--ping"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+  # traefik:
+  #   image: traefik:v3.3
+  #   container_name: traefik
+  #   restart: unless-stopped
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   networks:
+  #      - proxy
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ./config/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+  #     - ./config/traefik/dynamic:/etc/traefik/dynamic:ro
+  #     - traefik_certs:/certs
+  #   environment:
+  #     - TZ=${TZ:-Europe/Paris}
+  #   labels:
+  #     - "traefik.enable=true"
+  #     # Tableau de bord – accessible sur https://traefik.lab.local
+  #     - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${TRAEFIK_DOMAIN:-lab.local}`)"
+  #     - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
+  #     - "traefik.http.routers.traefik-dashboard.tls=true"
+  #     - "traefik.http.routers.traefik-dashboard.service=api@internal"
+  #     - "traefik.http.routers.traefik-dashboard.middlewares=auth@file,secure-headers@file"
+  #   healthcheck:
+  #     test: ["CMD", "traefik", "healthcheck", "--ping"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 3
 
 
 

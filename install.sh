@@ -118,7 +118,10 @@ prepare_environment() {
     log_success "Fichier .env existant trouvé"
   fi
 
-
+  # Charger automatiquement les variables du .env dans l'environnement du script
+  set -a
+  [ -f .env ] && . .env
+  set +a
 
   # Vérification du hash auth Traefik
   if grep -q 'placeholder_replace_with_real_hash' config/traefik/dynamic/middlewares.yml; then
