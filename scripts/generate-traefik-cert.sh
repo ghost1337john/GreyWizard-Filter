@@ -29,9 +29,11 @@ if [ "$#" -gt 0 ]; then
 fi
 
 # Construction de la liste SAN
+
+# Construction correcte de la liste SAN (séparée par des virgules)
 SAN="DNS:${DOMAINS[0]}"
 for d in "${DOMAINS[@]:1}"; do
-  SAN=",DNS:$d$SAN"
+  SAN="$SAN,DNS:$d"
 done
 
 openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -nodes \

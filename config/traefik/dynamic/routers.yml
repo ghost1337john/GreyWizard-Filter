@@ -14,27 +14,27 @@ http:
     # ── Media – forwarding vers le hub multimédia (Plex) ───
     # Redirige https://media.${DOMAIN} vers 192.168.10.20:32400
     # (port 32400 = Plex Media Server)
-    media:
-      rule: "Host(`media.${DOMAIN}`)"
-      entryPoints:
-        - websecure
-      tls: {}
-      middlewares:
-        - auth@file
-        - secure-headers@file
-      service: palantir-svc
 
-    # ── GW – interface admin de la passerelle ────────────
-    # Redirige https://gw.${DOMAIN} vers l'interface web du routeur
-    gw:
-      rule: "Host(`gw.${DOMAIN}`)"
-      entryPoints:
-        - websecure
-      tls: {}
-      middlewares:
-        - auth@file
-        - secure-headers@file
-      service: gandalf-svc
+    # Exemple de route externe (adapter ou supprimer si inutile)
+    # media:
+    #   rule: "Host(`media.greyhaven.local`)"
+    #   entryPoints:
+    #     - websecure
+    #   tls: {}
+    #   middlewares:
+    #     - auth@file
+    #     - secure-headers@file
+    #   service: palantir-svc
+
+    # gw:
+    #   rule: "Host(`gw.greyhaven.local`)"
+    #   entryPoints:
+    #     - websecure
+    #   tls: {}
+    #   middlewares:
+    #     - auth@file
+    #     - secure-headers@file
+    #   service: gandalf-svc
 
   services:
 
