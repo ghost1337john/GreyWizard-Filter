@@ -38,7 +38,7 @@ log_error()   { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 
 # ── Bannière ─────────────────────────────────────────────────
 print_banner() {
-  DOMAIN="${TRAEFIK_DOMAIN:-lab.local}"
+  DOMAIN="${DOMAIN:-lab.local}"
   SERVER_IP="${SERVER_IP:-192.168.1.3}"
   HOSTNAME="${HOSTNAME:-host1}"
   echo "  GreyWizard-Filter – AdGuard Home + Squid + Traefik"
@@ -182,7 +182,7 @@ start_stack() {
 # ── Résumé ───────────────────────────────────────────────────
 print_summary() {
   echo ""
-  DOMAIN="${TRAEFIK_DOMAIN:-lab.local}"
+  DOMAIN="${DOMAIN:-lab.local}"
   SERVER_IP="${SERVER_IP:-192.168.1.3}"
   echo -e "${CYAN}${BOLD}  ── Services disponibles ──────────────────────────────────${NC}"
   echo -e "  ${GREEN}Traefik dashboard${NC}  →  https://traefik.${DOMAIN}"
@@ -209,7 +209,7 @@ adapt_adguardhome_config() {
   #   REWRITES_YAML="config/adguardhome/conf/rewrites.yaml"
   #   echo "rewrites:" > "$REWRITES_YAML"
   #   for i in "${!MACHINES_HOST[@]}"; do
-  #     echo "  - domain: ${MACHINES_HOST[$i]}.$TRAEFIK_DOMAIN" >> "$REWRITES_YAML"
+  #     echo "  - domain: ${MACHINES_HOST[$i]}.$DOMAIN" >> "$REWRITES_YAML"
   #     echo "    answer: ${MACHINES_IP[$i]}" >> "$REWRITES_YAML"
   #     echo "    enabled: true" >> "$REWRITES_YAML"
   #   done

@@ -46,7 +46,7 @@ services:
   #   labels:
   #     - "traefik.enable=true"
   #     # Tableau de bord – accessible sur https://traefik.lab.local
-  #     - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${TRAEFIK_DOMAIN:-lab.local}`)"
+  #     - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${DOMAIN:-lab.local}`)"
   #     - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
   #     - "traefik.http.routers.traefik-dashboard.tls=true"
   #     - "traefik.http.routers.traefik-dashboard.service=api@internal"
@@ -77,10 +77,10 @@ services:
       - ./config/adguardhome/work:/opt/adguardhome/work
       - ./config/adguardhome/conf:/opt/adguardhome/conf
     environment:
-      - TZ=Europe/Paris
+      - TZ=${TZ:-Europe/Paris}
     # labels:
     #   - "traefik.enable=true"S
-    #   - "traefik.http.routers.adguardhome.rule=Host(`adguard.${TRAEFIK_DOMAIN:-lab.local}`)"
+    #   - "traefik.http.routers.adguardhome.rule=Host(`adguard.${DOMAIN:-lab.local}`)"
     #   - "traefik.http.routers.adguardhome.entrypoints=websecure"
     #   - "traefik.http.routers.adguardhome.tls=true"
     #   - "traefik.http.routers.adguardhome.middlewares=auth@file,secure-headers@file"
@@ -106,7 +106,7 @@ services:
       - ./config/squid/squid.conf:/etc/squid/squid.conf:ro
       - squid_cache:/var/spool/squid
     environment:
-      - TZ=Europe/Paris
+      - TZ=${TZ:-Europe/Paris}
     # labels:
     #   - "traefik.enable=false"
     healthcheck:

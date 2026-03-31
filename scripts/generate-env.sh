@@ -19,11 +19,11 @@ DNS_ENGINE="adguardhome"
 read -rp "Fuseau horaire (ex: Europe/Paris) [Europe/Paris] : " TZ
 TZ=${TZ:-Europe/Paris}
 
-read -rp "Domaine DNS interne (ex: lab.local, maison) [lab.local] : " TRAEFIK_DOMAIN
-TRAEFIK_DOMAIN=${TRAEFIK_DOMAIN:-lab.local}
+read -rp "Domaine DNS interne (ex: lab.local, maison) [lab.local] : " DOMAIN
+DOMAIN=${DOMAIN:-lab.local}
 
 # Affichage plus clair pour l'IP du serveur principal
-read -rp "IP du serveur principal (ex: host1.$TRAEFIK_DOMAIN) [192.168.10.10] : " SERVER_IP
+read -rp "IP du serveur principal (ex: host1.$DOMAIN) [192.168.10.10] : " SERVER_IP
 SERVER_IP=${SERVER_IP:-192.168.10.10}
 
 # # Saisie interactive du nombre de machines et de leurs infos
@@ -39,13 +39,13 @@ SERVER_IP=${SERVER_IP:-192.168.10.10}
 #   MACHINES_LABEL+=("$LABEL")
 #   read -rp "Nom d'hôte pour $LABEL (ex: host1, gw, media) : " HOST
 #   MACHINES_HOST+=("$HOST")
-#   read -rp "Adresse IP pour $HOST.$TRAEFIK_DOMAIN (ex: 192.168.10.$((10+i))) : " IP
+#   read -rp "Adresse IP pour $HOST.$DOMAIN (ex: 192.168.10.$((10+i))) : " IP
 #   MACHINES_IP+=("$IP")
 #   # Détection serveur principal (premier label contenant 'serveur' ou 'principal')
 #   if [[ -z "$SERVER_IP" && "$LABEL" =~ [Ss]erveur ]]; then
 #     SERVER_IP=$IP
 #   fi
-#   echo "  $HOST.$TRAEFIK_DOMAIN → $IP ($LABEL)"
+#   echo "  $HOST.$DOMAIN → $IP ($LABEL)"
 # done
 
 # # Exporte les tableaux pour qu'ils soient utilisables dans install.sh
@@ -67,7 +67,8 @@ ADGUARD_PORT=${ADGUARD_PORT:-8080}
 
 # echo "TZ=$TZ" >> .env
 # echo "SERVER_IP=$SERVER_IP" >> .env
-# echo "TRAEFIK_DOMAIN=$TRAEFIK_DOMAIN" >> .env
+# echo "DOMAIN=$DOMAIN" >> .env
+echo "DOMAIN=$DOMAIN" >> .env
 echo "ADGUARD_PORT=$ADGUARD_PORT" >> .env
 
 
@@ -81,8 +82,8 @@ echo "Ce dossier contiendra les fichiers de configuration et de travail d'AdGuar
 cat > config/squid/squid.conf <<EOF
 # ============================================================
 # Squid – Configuration proxy HTTP/HTTPS
-# Lab     : $TRAEFIK_DOMAIN
-# Hôte    : $SERVER_IP.$TRAEFIK_DOMAIN – $SERVER_IP
+# Lab     : $DOMAIN
+# Hôte    : $SERVER_IP.$DOMAIN – $SERVER_IP
 # Réseau  : $(echo $SERVER_IP | awk -F. '{print $1 "." $2 "." $3 ".0/24"}')
 # ============================================================
 

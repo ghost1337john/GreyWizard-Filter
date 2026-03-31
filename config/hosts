@@ -1,7 +1,0 @@
-# Exemple de fichier hosts généré dynamiquement lors de l'installation
-# Format : <IP>   <hostname>.<domaine>   <hostname>
-# Ce fichier sera écrasé par le script generate-env.sh selon vos réponses
-#
-# 192.168.10.1    gw.lab.local      gw
-# 192.168.10.20   media.lab.local   media
-# 192.168.10.10   host1.lab.local   host1
