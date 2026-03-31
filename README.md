@@ -395,3 +395,19 @@ Si vous choisissez AdGuard Home comme moteur DNS, les dossiers `config/adguardho
 # Pour toute adaptation, lancez simplement l'installation et laissez-vous guider par les scripts interactifs.
 #
 # Dans toute la documentation, remplacez les exemples lab.local/192.168.10.x par vos propres valeurs renseignées dans le .env.
+
+---
+
+## Sources officielles des conteneurs
+
+- **AdGuard Home**  
+    Image : [`adguard/adguardhome`](https://hub.docker.com/r/adguard/adguardhome)  
+    Documentation : [AdGuard Home Wiki](https://github.com/AdguardTeam/AdGuardHome/wiki)
+
+- **Squid**  
+    Image : [`ubuntu/squid`](https://hub.docker.com/r/ubuntu/squid)  
+    Documentation : [Squid Config Reference](https://www.squid-cache.org/Doc/config/)
+
+- **Traefik**  
+    Image : [`traefik`](https://hub.docker.com/_/traefik)  
+    Documentation : [Traefik v3](https://doc.traefik.io/traefik/)
