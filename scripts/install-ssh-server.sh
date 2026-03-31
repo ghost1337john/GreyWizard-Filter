@@ -73,20 +73,13 @@ if [[ "$CREATE_USER" =~ ^[Yy]$ ]]; then
     log_success "Utilisateur $SSH_USER créé."
   fi
   passwd "$SSH_USER"
-  log_info "Ajoutez la clé publique SSH pour $SSH_USER dans /home/$SSH_USER/.ssh/authorized_keys si besoin."
-  # Création de clé SSH pour l'utilisateur (optionnel et sécurisé)
-  if [[ "$CREATE_USER" =~ ^[Yy]$ ]]; then
-    read -rp "Voulez-vous générer une paire de clés SSH pour $SSH_USER ? (y/n) : " GEN_KEY
-    if [[ "$GEN_KEY" =~ ^[Yy]$ ]]; then
-      su - "$SSH_USER" -c "mkdir -p ~/.ssh && chmod 700 ~/.ssh"
-      su - "$SSH_USER" -c "ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -N '' -C '$SSH_USER@$(hostname)' < /dev/null"
-      su - "$SSH_USER" -c "cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys && chmod 600 ~/.ssh/id_ed25519 ~/.ssh/id_ed25519.pub"
-      chown -R "$SSH_USER:$SSH_USER" "/home/$SSH_USER/.ssh"
-      log_success "Clé SSH générée et ajoutée à authorized_keys pour $SSH_USER."
-      log_info "Clé privée disponible dans /home/$SSH_USER/.ssh/id_ed25519 (à sauvegarder et protéger !)."
-      log_warn "La clé privée NE DOIT PAS être partagée. Sauvegardez-la en lieu sûr."
-    fi
-  fi
+  log_info "\nIMPORTANT : La génération de la paire de clés SSH doit se faire sur le poste client.\n"
+  log_info "Depuis votre poste client, générez une clé SSH avec :"
+  echo "  ssh-keygen -t ed25519 -a 100 -C \"poste-client\""
+  log_info "Puis copiez la clé publique sur le serveur avec :"
+  echo "  ssh-copy-id -i ~/.ssh/id_ed25519.pub $SSH_USER@<IP_SERVEUR>"
+  log_info "Ou, en méthode manuelle :"
+  echo "  cat ~/.ssh/id_ed25519.pub | ssh $SSH_USER@<IP_SERVEUR> 'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys'"
   # Demande si l'utilisateur doit avoir les droits sudo
   read -rp "L'utilisateur $SSH_USER doit-il avoir les droits sudo ? (y/n) : " SUDO_USER
   if [[ "$SUDO_USER" =~ ^[Yy]$ ]]; then
@@ -187,11 +180,7 @@ if [[ -n "${SSH_USER:-}" ]]; then
   else
     log_info "Droits sudo : NON"
   fi
-  if [[ -f "/home/$SSH_USER/.ssh/id_ed25519" ]]; then
-    log_info "Clé SSH générée pour $SSH_USER : OUI"
-  else
-    log_info "Clé SSH générée pour $SSH_USER : NON"
-  fi
+  log_info "Clé SSH : À générer et copier depuis le poste client (voir instructions ci-dessus)."
 fi
 if [[ -f /etc/issue.net ]]; then
   log_info "Bannière SSH activée : OUI"
@@ -206,17 +195,11 @@ fi
 log_info "Permissions /etc/ssh/sshd_config : $(stat -c '%a %U:%G' /etc/ssh/sshd_config)"
 log_info "===== FIN DU RAPPORT =====\n"
 
-# Instructions pour récupérer la clé privée sur le poste client
-if [[ -n "${SSH_USER:-}" && -f "/home/$SSH_USER/.ssh/id_ed25519" ]]; then
-  log_info "\n===== RÉCUPÉRATION DE LA CLÉ PRIVÉE POUR LE CLIENT ====="
-  log_info "Pour transférer la clé privée sur votre poste client :"
-  log_info "Sous Linux/macOS :"
-  echo "  scp root@<IP_SERVEUR>:/home/$SSH_USER/.ssh/id_ed25519 <chemin_local>"
-  log_info "Sous Windows (avec WinSCP ou scp) :"
-  echo "  Utilisez WinSCP en mode SFTP, connectez-vous en root, puis téléchargez /home/$SSH_USER/.ssh/id_ed25519"
-  echo "  Ou avec scp (depuis PowerShell) :"
-  echo "  scp root@<IP_SERVEUR>:/home/$SSH_USER/.ssh/id_ed25519 C:\\Users\\<VotreNom>\\.ssh\\id_ed25519"
-  log_warn "Après transfert, supprimez la clé privée du serveur : rm /home/$SSH_USER/.ssh/id_ed25519"
-  log_info "Assurez-vous que les permissions de la clé privée sont strictes (chmod 600)."
-  log_info "N'utilisez jamais la clé privée sur plusieurs postes sans précaution."
-fi
+# Rappel final pour la gestion des clés SSH côté client
+echo -e "\n\033[1;33m[IMPORTANT]\033[0m Pour sécuriser l'accès SSH, générez votre paire de clés SSH sur votre poste client :"
+echo "  ssh-keygen -t ed25519 -a 100 -C \"poste-client\""
+echo -e "\nPuis copiez la clé publique sur ce serveur avec :"
+echo "  ssh-copy-id -i ~/.ssh/id_ed25519.pub <utilisateur>@<IP_SERVEUR>"
+echo -e "\nOu, en méthode manuelle :"
+echo "  cat ~/.ssh/id_ed25519.pub | ssh <utilisateur>@<IP_SERVEUR> 'mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys'"
+echo -e "\nNe transférez JAMAIS la clé privée sur le serveur. Testez la connexion SSH avant de fermer la session root."
