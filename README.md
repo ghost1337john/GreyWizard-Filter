@@ -33,8 +33,9 @@ Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des fo
 ## Fonctionnement global des outils
 
 - **AdGuard Home** : Fournit la résolution DNS locale pour tout le réseau et bloque la publicité/les trackers.
-    - Interface web sur https://adguard.lab.local
+    - Interface web sur https://adguard.${DOMAIN}
     - Les entrées DNS locales (machines du lab) doivent être ajoutées manuellement dans la section `rewrites:` de la configuration AdGuard Home. L'injection automatique est désactivée temporairement suite à un bug.
+    - Le domaine interne utilisé (ex : lab.local) est défini dans le fichier .env via la variable DOMAIN.
 - **Squid** : Sert de proxy HTTP/HTTPS pour les clients du réseau. Il permet le cache, l’anonymisation et le filtrage DNS des requêtes web. Les clients peuvent configurer leur navigateur ou OS pour passer par Squid.
 - **Traefik** : Reverse proxy qui gère le routage HTTPS, la terminaison TLS (certificats auto-signés ou mkcert), l’accès sécurisé aux interfaces web (dashboard Traefik, AdGuard admin) et l’application de middlewares (authentification, headers, etc.).
 
@@ -51,11 +52,13 @@ Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des fo
 
 | Hostname                | IP              | Rôle                        |
 |-------------------------|-----------------|-----------------------------|
-| `passerelle.mondomaine` | 192.168.10.1    | Passerelle / Routeur        |
-| `hub.mondomaine`        | 192.168.10.2    | Hub multimédia              |
-| `serveur.mondomaine`    | 192.168.10.10   | Hôte Docker — stack filtre  |
+| `passerelle.${DOMAIN}` | 192.168.10.1    | Passerelle / Routeur        |
+| `hub.${DOMAIN}`        | 192.168.10.2    | Hub multimédia              |
+| `serveur.${DOMAIN}`    | 192.168.10.10   | Hôte Docker — stack filtre  |
 
-La stack Docker tourne sur le serveur principal défini lors de l'installation (voir .env).
+La stack Docker tourne sur le serveur principal défini lors de l'installation (voir .env, variable DOMAIN).
+#
+# ℹ️ Le domaine interne utilisé pour toutes les URL (ex : lab.local) est défini dans le fichier .env via la variable DOMAIN. Modifiez cette variable pour adapter la stack à votre propre nom de domaine interne.
 
 ---
 

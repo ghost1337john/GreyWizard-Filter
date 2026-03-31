@@ -5,10 +5,7 @@ Ce document regroupe des guides pratiques pour configurer chaque service de la s
 ---
 
 
-## AdGuard Home (interface web)
-
-### Accès
-- URL : https://adguard.<domaine>
+- URL : https://adguard.${DOMAIN} (le domaine est défini dans le .env)
 - Authentification : login admin (défini au premier lancement ou dans AdGuardHome.yaml)
 
 ### Exemples de configuration
@@ -27,10 +24,7 @@ Ce document regroupe des guides pratiques pour configurer chaque service de la s
 
 ---
 
-## Traefik (interface web)
-
-### Accès
-- URL : https://traefik.<domaine>
+- URL : https://traefik.${DOMAIN} (le domaine est défini dans le .env)
 - Authentification : basicAuth (login admin, mot de passe hashé dans config/traefik/dynamic/middlewares.yml)
 
 ### Exemples de configuration

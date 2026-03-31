@@ -1,8 +1,8 @@
 # Changelog – Stack DNS/Proxy/Reverse Proxy
 
 
-## [Unreleased]
 - Améliorations continues de la documentation et des scripts
+- Harmonisation de la documentation avec la variable DOMAIN du .env (remplace TRAEFIK_DOMAIN)
 - Ajout d’exemples de configuration pour AdGuard Home
 - Ajout d’une FAQ et d’une section debug
 - Désactivation temporaire de l'injection automatique des entrées DNS (rewrites) dans AdGuard Home lors de l'installation (ajout manuel requis)

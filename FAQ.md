@@ -14,8 +14,7 @@ R : Par sécurité, le mot de passe admin doit être choisi par l’utilisateur 
 - Vérifiez que le reverse proxy Traefik est bien démarré.
 - Essayez d’accéder à l’interface via l’IP directe et le port local (ex : http://127.0.0.1:8080 ou :3000).
 
-### 2. Les clients du réseau ne sont pas filtrés par le DNS
-- Assurez-vous que le DNS des clients pointe bien vers l’IP du serveur (voir .env).
+- Assurez-vous que le DNS des clients pointe bien vers l’IP du serveur (voir .env, variable DOMAIN).
 - Vérifiez la redirection DNS sur le firewall/routeur (voir README, section redirection DNS).
 - Vérifiez que le service DNS choisi (Pi-hole ou AdGuard Home) est bien en état healthy.
 
@@ -24,9 +23,9 @@ R : Par sécurité, le mot de passe admin doit être choisi par l’utilisateur 
 - Vérifiez la syntaxe de config/squid/squid.conf.
 - Consultez les logs du conteneur Squid (`docker compose logs squid`).
 
-### 4. Problème de certificat HTTPS (Traefik)
 - Par défaut, Traefik utilise des certificats auto-signés. Ajoutez le certificat racine à vos clients pour éviter les alertes.
 - Pour un certificat local de confiance, utilisez mkcert (voir README).
+- Le domaine utilisé pour les URL (ex : traefik.${DOMAIN}) est défini dans le .env.
 
 ### 5. Les scripts ne sont pas exécutables
 - Rendez-les exécutables : `chmod +x scripts/*.sh install.sh`.
