@@ -127,13 +127,20 @@ prepare_environment() {
   set -a
   [ -f .env ] && . .env
   set +a
+  # Vérification du hash auth Traefik
+  if grep -q 'placeholder_replace_with_real_hash' config/traefik/dynamic/middlewares.yml; then
+    log_warn "Le hash basicAuth Traefik est un placeholder !"
+    log_warn "Générez-en un avec : echo \$(htpasswd -nB admin) | sed -e 's/\\$/\\$\\$/g'"
+    log_warn "Puis copiez le hash dans config/traefik/dynamic/middlewares.yml à la place du placeholder."
+    log_warn "Tant que ce placeholder n'est pas remplacé, l'accès au dashboard Traefik sera bloqué."
+  fi
 
-  # # Vérification du hash auth Traefik
-  # if grep -q 'placeholder_replace_with_real_hash' config/traefik/dynamic/middlewares.yml; then
-  #   log_warn "Le hash basicAuth Traefik est un placeholder !"
-  #   log_warn "Générez-en un via : echo \$(htpasswd -nB admin) | sed -e 's/\\\$/\\\$\\\$/g'"
-  #   log_warn "Puis mettez à jour config/traefik/dynamic/middlewares.yml"
-  # fi
+  # Vérification du certificat Traefik
+  if [[ ! -f "traefik_certs/local.crt" || ! -f "traefik_certs/local.key" ]]; then
+    log_warn "Certificat auto-signé Traefik absent. Générez-le avec :"
+    log_warn "    ./scripts/generate-traefik-cert.sh"
+    log_warn "Vous pouvez aussi utiliser mkcert pour un certificat local de confiance."
+  fi
 }
 
 # ── Démarrage de la stack ────────────────────────────────────

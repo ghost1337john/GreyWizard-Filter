@@ -89,6 +89,40 @@ sudo bash ./install.sh
 #    et terminez l'assistant d'installation web AdGuard Home (choix du mot de passe admin, etc.).
 #    Laissez le script attendre ou relancez ./install.sh après l'installation web.
 
+---
+
+## Accès Traefik (dashboard, certificats, sécurité)
+
+- **Dashboard Traefik** : https://traefik.${DOMAIN}
+- **Authentification** : protégée par basic auth (voir ci-dessous)
+- **Certificat TLS** : auto-signé par défaut (voir ci-dessous)
+
+**1. Générer le hash d’authentification**
+
+Pour activer l’accès sécurisé au dashboard Traefik, générez un hash bcrypt :
+
+```bash
+echo $(htpasswd -nB admin) | sed -e 's/\$/\$\$/g'
+```
+
+Copiez le hash obtenu dans `config/traefik/dynamic/middlewares.yml` à la place du placeholder.
+
+**2. Générer un certificat auto-signé**
+
+Pour éviter les avertissements navigateur, générez un certificat local :
+
+```bash
+./scripts/generate-traefik-cert.sh
+```
+
+Les fichiers seront créés dans `traefik_certs/` et utilisés automatiquement.
+
+Vous pouvez aussi utiliser [mkcert](https://github.com/FiloSottile/mkcert) pour un certificat reconnu localement.
+
+**3. Documentation Traefik**
+
+[Traefik v3 documentation](https://doc.traefik.io/traefik/)
+
 # 8. Relancez l'installation pour appliquer automatiquement le port choisi dans .env et injecter les entrées DNS locales dans la section rewrites :
 sudo bash ./install.sh
 

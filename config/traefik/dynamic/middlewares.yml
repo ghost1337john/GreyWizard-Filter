@@ -9,8 +9,9 @@ http:
 
     # ── Authentification basique ─────────────────────────────
     # Protège les tableaux de bord (Traefik, Pi-hole).
-    # Pour générer un hash bcrypt :
+    # Pour générer un hash bcrypt personnalisé (remplacez le placeholder !) :
     #   echo $(htpasswd -nB admin) | sed -e 's/\$/\$\$/g'
+    # Placez le hash généré à la place de 'placeholder_replace_with_real_hash' ci-dessous.
     auth:
       basicAuth:
         users:

@@ -12,10 +12,10 @@ http:
   routers:
 
     # ── Media – forwarding vers le hub multimédia (Plex) ───
-    # Redirige https://media.lab.local vers 192.168.10.20:32400
+    # Redirige https://media.${DOMAIN} vers 192.168.10.20:32400
     # (port 32400 = Plex Media Server)
     media:
-      rule: "Host(`media.lab.local`)"
+      rule: "Host(`media.${DOMAIN}`)"
       entryPoints:
         - websecure
       tls: {}
@@ -25,9 +25,9 @@ http:
       service: palantir-svc
 
     # ── GW – interface admin de la passerelle ────────────
-    # Redirige https://gw.lab.local vers l'interface web du routeur
+    # Redirige https://gw.${DOMAIN} vers l'interface web du routeur
     gw:
-      rule: "Host(`gw.lab.local`)"
+      rule: "Host(`gw.${DOMAIN}`)"
       entryPoints:
         - websecure
       tls: {}
