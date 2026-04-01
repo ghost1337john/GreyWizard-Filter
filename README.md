@@ -59,8 +59,8 @@ Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des fo
 | `serveur.${DOMAIN}`    | 192.168.10.10   | Hôte Docker — stack filtre  |
 
 La stack Docker tourne sur le serveur principal défini lors de l'installation (voir .env, variable DOMAIN).
-#
-# ℹ️ Le domaine utilisé pour toutes les URL (ex : `intranet.home.arpa` pour un usage interne, ou `lab.example.com` pour un domaine public) est défini dans le fichier .env via la variable DOMAIN. Modifiez cette variable pour adapter la stack à votre environnement.
+
+ℹ️ Le domaine utilisé pour toutes les URL (ex : `intranet.home.arpa` pour un usage interne, ou `lab.example.com` pour un domaine public) est défini dans le fichier `.env` via la variable `DOMAIN`. Modifiez cette variable pour adapter la stack à votre environnement.
 
 ---
 
