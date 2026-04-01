@@ -36,6 +36,11 @@ entryPoints:
   websecure:
     address: ":443"
 
+  # Port interne – métriques Prometheus + ping healthcheck
+  # NE PAS exposer sur internet – LAN uniquement
+  traefik:
+    address: ":8080"
+
 # ── Fournisseurs ────────────────────────────────────────────
 providers:
   # Découverte automatique des services via les labels Docker
