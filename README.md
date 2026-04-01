@@ -1,6 +1,8 @@
 
 > ⚠️ **DISCLAIMER :** ce projet a été testé et déployé dans un lab domestique réel, mais il peut encore contenir des bugs ou nécessiter des ajustements selon votre environnement.
 
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/17ede7a4-e488-4688-b7e5-bf7795e5d151" />
+
 
 # GreyWizard-Filter : la stack de filtrage et reverse proxy adaptable à tout lab ou réseau local
 
