@@ -400,26 +400,29 @@ Si vous avez besoin d'aide pour adapter ou déployer la stack dans votre environ
 - [Traefik v3 documentation](https://doc.traefik.io/traefik/)
 - [mkcert](https://github.com/FiloSottile/mkcert)
 
-# Projet adaptable à tout environnement LAN
-#
-# Ce projet est conçu pour être utilisé dans n'importe quel lab ou réseau local.
-# Les noms d'hôtes, domaines et adresses IP sont entièrement personnalisables lors de l'installation grâce au script interactif (scripts/generate-env.sh).
-#
-# Toutes les références à des domaines internes ou à des IP par défaut sont des exemples :
-#   - Le domaine, les noms d'hôtes et les IP seront adaptés selon vos réponses lors de la génération du .env et du fichier hosts.
-#   - Les fichiers de configuration, scripts et documentation utilisent les variables du .env pour garantir la cohérence avec votre environnement.
-#
-# Exemple :
-#   - Domaine choisi : ${DOMAIN}
-#   - Serveur principal : host1.${DOMAIN} (192.168.10.10)
-#   - Passerelle : gw.${DOMAIN} (192.168.10.1)
-#   - Hub multimédia : media.${DOMAIN} (192.168.10.20)
-#
-# Les instructions, configurations et accès s'adapteront automatiquement à ces choix.
-#
-# Pour toute adaptation, lancez simplement l'installation et laissez-vous guider par les scripts interactifs.
-#
-# Dans toute la documentation, remplacez les exemples ${DOMAIN}/192.168.10.x par vos propres valeurs renseignées dans le .env.
+## Projet adaptable à tout environnement LAN
+
+Ce projet est conçu pour être utilisé dans n'importe quel lab ou réseau local.
+
+Les noms d'hôtes, domaines et adresses IP sont entièrement personnalisables lors de l'installation grâce au script interactif `scripts/generate-env.sh`.
+
+Toutes les références à des domaines internes ou à des IP par défaut sont des exemples :
+
+- le domaine, les noms d'hôtes et les IP seront adaptés selon vos réponses lors de la génération du `.env` et du fichier `hosts`
+- les fichiers de configuration, scripts et documentation utilisent les variables du `.env` pour garantir la cohérence avec votre environnement
+
+Exemple :
+
+- domaine choisi : `<votre-domaine>`
+- serveur principal : `host1.<votre-domaine>` (`192.168.10.10`)
+- passerelle : `gw.<votre-domaine>` (`192.168.10.1`)
+- hub multimédia : `media.<votre-domaine>` (`192.168.10.20`)
+
+Les instructions, configurations et accès s'adapteront automatiquement à ces choix.
+
+Pour toute adaptation, lancez simplement l'installation et laissez-vous guider par les scripts interactifs.
+
+Dans toute la documentation, remplacez les exemples de domaines et d'IP par vos propres valeurs renseignées dans le `.env`.
 
 ---
 
