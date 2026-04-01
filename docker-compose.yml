@@ -36,6 +36,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "8080:8080"  # Métriques Prometheus – accessible sur http://IP_SERVEUR:8080/metrics (LAN uniquement)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./config/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
