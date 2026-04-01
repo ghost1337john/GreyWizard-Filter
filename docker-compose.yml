@@ -43,12 +43,14 @@ services:
       - traefik_certs:/certs
     environment:
       - TZ=${TZ:-Europe/Paris}
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
     labels:
       - "traefik.enable=true"
       # Tableau de bord – accessible sur https://traefik.lab.local
-      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${DOMAIN:-lab.local}`)"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${DOMAIN}`)"
       - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
       - "traefik.http.routers.traefik-dashboard.tls=true"
+      - "traefik.http.routers.traefik-dashboard.tls.certresolver=letsencrypt"
       - "traefik.http.routers.traefik-dashboard.service=api@internal"
       - "traefik.http.routers.traefik-dashboard.middlewares=auth@file,secure-headers@file"
     healthcheck:
@@ -68,9 +70,9 @@ services:
     networks:
        - proxy
     ports:
-      - :53:53/tcp
-      - :53:53/udp
-      - :3000:3000/tcp
+      - ":53:53/tcp"
+      - ":53:53/udp"
+      - ":3000:3000/tcp"
       - "${ADGUARD_PORT:-3000}:${ADGUARD_PORT:-3000}/tcp" # Interface web accessible sur le port choisi
     volumes:
       - ./config/adguardhome/work:/opt/adguardhome/work
@@ -79,11 +81,12 @@ services:
       - TZ=${TZ:-Europe/Paris}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.adguardhome.rule=Host(`adguard.${DOMAIN:-lab.local}`)"
+      - "traefik.http.routers.adguardhome.rule=Host(`adguard.${DOMAIN}`)"
       - "traefik.http.routers.adguardhome.entrypoints=websecure"
       - "traefik.http.routers.adguardhome.tls=true"
+      - "traefik.http.routers.adguardhome.tls.certresolver=letsencrypt"
       - "traefik.http.routers.adguardhome.middlewares=auth@file,secure-headers@file"
-      - "traefik.http.services.adguardhome.loadbalancer.server.port=3000"
+      - "traefik.http.services.adguardhome.loadbalancer.server.port=8066"
     healthcheck:
       test: ["CMD", "sh", "-c", "curl -s http://localhost:${ADGUARD_PORT:-3000} | grep -q 'Found' || curl -s http://localhost:3000 | grep -q 'Found'"]
       interval: 30s
@@ -100,7 +103,7 @@ services:
        - proxy
     ports:
       # Proxy accessible au LAN lab.local sur host1:3128
-      - :3128:3128
+      - ":3128:3128"
     volumes:
       - ./config/squid/squid.conf:/etc/squid/squid.conf:ro
       - squid_cache:/var/spool/squid

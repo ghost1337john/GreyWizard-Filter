@@ -50,7 +50,7 @@ providers:
 
 # ── Logs ────────────────────────────────────────────────────
 log:
-  level: "${TRAEFIK_LOG_LEVEL:-INFO}"
+  level: "INFO"
   format: json
 
 accessLog:
@@ -62,6 +62,18 @@ accessLog:
       names:
         User-Agent: keep
         Authorization: drop
+
+# ── ACME / Let's Encrypt (DNS-01 Cloudflare) ───────────────
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: "fontaine906@gmail.com"
+      storage: "/certs/acme.json"
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"
 
 # ── Ping (healthcheck interne) ───────────────────────────────
 ping: {}

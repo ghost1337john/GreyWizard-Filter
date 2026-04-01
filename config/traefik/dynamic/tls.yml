@@ -1,4 +1,3 @@
-tls:
-  certificates:
-    - certFile: /certs/local.crt
-      keyFile:  /certs/local.key
+# Empty TLS configuration file
+# Let's Encrypt certificates are managed by ACME in traefik.yml
+
