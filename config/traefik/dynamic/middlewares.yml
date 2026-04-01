@@ -15,7 +15,7 @@ http:
     auth:
       basicAuth:
         users:
-          - "admin:$$2y$$05$$AhBLWlBZq2Z1HL83C8Gc/ew0If0QOKA/QR844xPWFsIY603PfyaaG"
+          - "admin:$2y$05$AhBLWlBZq2Z1HL83C8Gc/ew0If0QOKA/QR844xPWFsIY603PfyaaG"
 
     # ── En-têtes de sécurité HTTP ────────────────────────────
     secure-headers:
