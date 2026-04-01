@@ -297,6 +297,33 @@ Traefik doit alors utiliser des certificats **auto-signés** ou des certificats 
 
 Si vous voulez des certificats Let's Encrypt valides, utilisez à la place un domaine public enregistré que vous contrôlez et configurez le challenge DNS-01.
 
+### Adaptation de la configuration pour un domaine interne
+
+Pour faire fonctionner la stack sans domaine public, adaptez explicitement la configuration de cette façon :
+
+1. Dans `.env`, définissez `DOMAIN` avec votre domaine interne, par exemple `intranet.home.arpa`.
+2. N'utilisez pas les valeurs ACME/Cloudflare pour ce mode ; elles ne serviront pas à émettre un certificat valide.
+3. Dans `docker-compose.yml`, retirez ou commentez les labels `traefik.http.routers.*.tls.certresolver=letsencrypt` sur les routeurs Traefik et AdGuard Home.
+4. Générez un certificat local :
+     - soit avec `./scripts/generate-traefik-cert.sh`
+     - soit avec `mkcert`
+5. Placez les fichiers du certificat et de la clé dans `traefik_certs/`.
+6. Renseignez `config/traefik/dynamic/tls.yml` avec la référence vers ces fichiers.
+7. Redémarrez Traefik avec `docker compose up -d --force-recreate traefik`.
+
+Exemple minimal de `config/traefik/dynamic/tls.yml` pour un certificat local :
+
+```yaml
+tls:
+    stores:
+        default:
+            defaultCertificate:
+                certFile: /certs/local.crt
+                keyFile: /certs/local.key
+```
+
+Avec `mkcert`, vous pouvez aussi utiliser d'autres noms de fichiers, mais il faut alors adapter `certFile` et `keyFile` dans `config/traefik/dynamic/tls.yml`.
+
 Pour un certificat de confiance local (éviter les avertissements navigateur) :
 
 ```bash
@@ -309,11 +336,13 @@ mkcert -install
 mkcert "*.<votre-domaine-interne>" <votre-domaine-interne>
 
 # Monter le certificat dans Traefik
-# → créer config/traefik/dynamic/tls.yml avec :
+# → adapter config/traefik/dynamic/tls.yml avec :
 # tls:
-#   certificates:
-#     - certFile: /certs/_wildcard.<votre-domaine-interne>.pem
-#       keyFile:  /certs/_wildcard.<votre-domaine-interne>-key.pem
+#   stores:
+#     default:
+#       defaultCertificate:
+#         certFile: /certs/_wildcard.<votre-domaine-interne>.pem
+#         keyFile: /certs/_wildcard.<votre-domaine-interne>-key.pem
 ```
 
 ---

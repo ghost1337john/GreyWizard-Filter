@@ -7,6 +7,12 @@ Important pour les noms de domaine et TLS :
 - si vous voulez des certificats Let's Encrypt via Traefik, utilisez un nom de domaine public enregistré que vous contrôlez et configurez correctement votre DNS
 - sans domaine public, utilisez un certificat auto-signé ou `mkcert`
 
+Pour un domaine interne, il faut aussi adapter la config Traefik :
+- retirer les labels `tls.certresolver=letsencrypt` dans `docker-compose.yml`
+- générer un certificat local
+- renseigner `config/traefik/dynamic/tls.yml` avec `certFile` et `keyFile`
+- redémarrer Traefik
+
 ---
 
 

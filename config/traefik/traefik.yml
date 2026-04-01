@@ -8,8 +8,9 @@
 # n'est pas utilisé. Traefik génère des certificats auto-signés.
 # Pour un CA local de confiance, utilisez mkcert :
 #   mkcert -install && mkcert "*.lab.local"
-# puis montez les certificats dans le volume traefik_certs et
-# référencez-les dans config/traefik/dynamic/tls.yml.
+# puis référencez les fichiers dans config/traefik/dynamic/tls.yml.
+# En mode domaine interne, retirez aussi les labels
+# `traefik.http.routers.*.tls.certresolver=letsencrypt` du docker-compose.
 #
 # Documentation : https://doc.traefik.io/traefik/
 # ============================================================

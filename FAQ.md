@@ -27,6 +27,7 @@
 - Pas pour faire fonctionner la stack en local.
 - Oui si vous voulez des certificats Let's Encrypt valides via Traefik en DNS-01 ou une exposition avec un vrai nom public.
 - Non si vous restez sur un domaine interne de type `lab.local`, mais dans ce cas il faut utiliser un certificat auto-signé ou `mkcert` au lieu de Let's Encrypt.
+- Dans ce cas, il faut aussi retirer `tls.certresolver=letsencrypt` des routeurs Traefik concernés et déclarer un certificat local dans `config/traefik/dynamic/tls.yml`.
 
 ### 5. Les scripts ne sont pas exécutables
 - Rendez-les exécutables : `chmod +x scripts/*.sh install.sh`.
