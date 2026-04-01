@@ -28,9 +28,8 @@ http:
         contentTypeNosniff: true
         browserXssFilter: true
         referrerPolicy: "strict-origin-when-cross-origin"
-        frameDeny: true
+        frameDeny: false
         customFrameOptionsValue: "SAMEORIGIN"
-        contentSecurityPolicy: "default-src 'self'"
         permissionsPolicy: "camera=(), microphone=(), geolocation=()"
 
     # ── Limitation du débit ──────────────────────────────────
