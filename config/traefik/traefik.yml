@@ -78,5 +78,33 @@ certificatesResolvers:
           - "1.1.1.1:53"
           - "8.8.8.8:53"
 
+# ── Métriques Prometheus ─────────────────────────────────────
+# Expose les métriques sur l'entrypoint interne "traefik" (:8080)
+# Accessible via http://HOST:8080/metrics
+# Compatible Grafana (dashboard Traefik officiel : ID 17346)
+#
+# Métriques disponibles :
+#   - traefik_requests_total         → nombre total de requêtes
+#   - traefik_request_duration_seconds → latence (histogram)
+#   - traefik_router_requests_total   → requêtes par router
+#   - traefik_service_requests_total  → requêtes par service backend
+#   - traefik_entrypoint_requests_total → requêtes par entrypoint
+metrics:
+  prometheus:
+    addEntryPointsLabels: true   # Métriques par entrypoint (web, websecure)
+    addRoutersLabels: true        # Métriques par router (adguard, traefik-dashboard…)
+    addServicesLabels: true       # Métriques par service backend
+    entryPoint: traefik           # Exposé sur le port interne :8080/metrics
+
+# ── Tracing distribué (désactivé – nécessite un backend) ─────
+# Décommentez si vous avez un collecteur OTLP (Jaeger, Grafana Tempo…)
+# tracing:
+#   otlp:
+#     http:
+#       endpoint: "http://jaeger:4318"   # URL de votre collecteur OTLP
+#
+# Pour démarrer Jaeger rapidement en local :
+#   docker run -d --name jaeger -p 16686:16686 -p 4318:4318 jaegertracing/all-in-one:latest
+
 # ── Ping (healthcheck interne) ───────────────────────────────
 ping: {}
