@@ -30,12 +30,14 @@ Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des fo
 
 > **ℹ️ Note :** L'intégration de Traefik est actuellement en phase de test. Les autres services (AdGuard Home, Squid) sont stables et pleinement fonctionnels. Traefik sera officiellement intégré et documenté dans la prochaine release majeure du projet.
 
+> **ℹ️ Domaine et certificats TLS :** si vous voulez des certificats Let's Encrypt via DNS-01, vous devez disposer d'un nom de domaine public que vous contrôlez réellement, en pratique un domaine enregistré chez un registrar et géré par un fournisseur DNS compatible comme Cloudflare. Un domaine purement interne de type `lab.local` ou un sous-domaine non délégué publiquement ne permet pas d'obtenir ces certificats. Dans ce cas, utilisez un certificat auto-signé ou `mkcert`.
+
 ## Fonctionnement global des outils
 
 - **AdGuard Home** : Fournit la résolution DNS locale pour tout le réseau et bloque la publicité/les trackers.
     - Interface web sur https://adguard.${DOMAIN}
     - Les entrées DNS locales (machines du lab) doivent être ajoutées manuellement dans la section `rewrites:` de la configuration AdGuard Home. L'injection automatique est désactivée temporairement suite à un bug.
-    - Le domaine interne utilisé (ex : lab.local) est défini dans le fichier .env via la variable DOMAIN.
+    - La variable `DOMAIN` peut être un domaine interne pour un usage local, ou un domaine public si vous voulez des certificats Let's Encrypt.
 - **Squid** : Sert de proxy HTTP/HTTPS pour les clients du réseau. Il permet le cache, l’anonymisation et le filtrage DNS des requêtes web. Les clients peuvent configurer leur navigateur ou OS pour passer par Squid.
 - **Traefik** : Reverse proxy qui gère le routage HTTPS, la terminaison TLS (certificats auto-signés ou mkcert), l’accès sécurisé aux interfaces web (dashboard Traefik, AdGuard admin) et l’application de middlewares (authentification, headers, etc.).
 
@@ -58,7 +60,7 @@ Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des fo
 
 La stack Docker tourne sur le serveur principal défini lors de l'installation (voir .env, variable DOMAIN).
 #
-# ℹ️ Le domaine interne utilisé pour toutes les URL (ex : lab.local) est défini dans le fichier .env via la variable DOMAIN. Modifiez cette variable pour adapter la stack à votre propre nom de domaine interne.
+# ℹ️ Le domaine utilisé pour toutes les URL (ex : `intranet.home.arpa` pour un usage interne, ou `lab.example.com` pour un domaine public) est défini dans le fichier .env via la variable DOMAIN. Modifiez cette variable pour adapter la stack à votre environnement.
 
 ---
 
@@ -78,9 +80,10 @@ sudo bash ./scripts/bootstrap-prereqs.sh
 sudo bash ./scripts/generate-env.sh
 
 # 4. (Optionnel, si Traefik activé) Générer un hash bcrypt pour l'authentification Traefik :
-echo $(htpasswd -nB admin) | sed -e 's/\$/\$\$/g'
+htpasswd -nB admin
 
-# 5. Copier ce hash dans config/traefik/dynamic/middlewares.yml à la place du placeholder.
+# 5. Copier la ligne complète renvoyée dans config/traefik/dynamic/middlewares.yml
+#    à la place du placeholder prévu pour basicAuth.
 
 # 6. Installer la stack (premier lancement)
 sudo bash ./install.sh
@@ -97,15 +100,24 @@ sudo bash ./install.sh
 - **Authentification** : protégée par basic auth (voir ci-dessous)
 - **Certificat TLS** : auto-signé par défaut (voir ci-dessous)
 
+Si vous voulez remplacer le certificat auto-signé par un certificat Let's Encrypt, il vous faut :
+- un domaine public enregistré et contrôlé par vous
+- la possibilité de créer des enregistrements DNS sur cette zone
+- un token API DNS limité à cette zone si vous utilisez DNS-01 avec Cloudflare
+
+Si vous n'avez pas de domaine public, gardez un domaine interne et utilisez `mkcert` ou un certificat auto-signé.
+
 **1. Générer le hash d’authentification**
 
 Pour activer l’accès sécurisé au dashboard Traefik, générez un hash bcrypt :
 
 ```bash
-echo $(htpasswd -nB admin) | sed -e 's/\$/\$\$/g'
+htpasswd -nB admin
 ```
 
-Copiez le hash obtenu dans `config/traefik/dynamic/middlewares.yml` à la place du placeholder.
+Copiez la ligne complète obtenue dans `config/traefik/dynamic/middlewares.yml` à la place du placeholder.
+
+Ne commitez pas un hash réel, un mot de passe, un token Cloudflare ou une adresse email personnelle dans le dépôt. Utilisez des placeholders dans les exemples et renseignez vos vraies valeurs uniquement dans votre environnement de déploiement.
 
 **2. Générer un certificat auto-signé**
 
@@ -164,10 +176,10 @@ Exemple généré :
 
 ```yaml
 rewrites:
-    - domain: host1.lab.local
+    - domain: host1.${DOMAIN}
         answer: 192.168.10.10
         enabled: true
-    - domain: passerelle.lab.local
+    - domain: passerelle.${DOMAIN}
         answer: 192.168.10.1
         enabled: true
 ```
@@ -178,13 +190,13 @@ rewrites:
 
 | URL                                    | Service              | Auth requise |
 |----------------------------------------|----------------------|--------------|
-| https://traefik.lab.local              | Tableau de bord Traefik | Oui (basic) |
-| https://adguard.lab.local              | Interface AdGuard Home  | Oui (basic) |
-| `192.168.10.10:3128`                   | Proxy Squid             | Non (LAN)   |
-| `192.168.10.10:53`                     | DNS AdGuard Home        | Non         |
+| https://traefik.${DOMAIN}              | Tableau de bord Traefik | Oui (basic) |
+| https://adguard.${DOMAIN}              | Interface AdGuard Home  | Oui (basic puis login AdGuard) |
+| `<IP_DU_SERVEUR>:3128`                 | Proxy Squid             | Non (LAN)   |
+| `<IP_DU_SERVEUR>:53`                   | DNS AdGuard Home        | Non         |
 
-> **Note DNS** : pour résoudre les noms `*.lab.local`, configurez vos clients et
-> serveurs avec `192.168.10.10` comme serveur DNS primaire (géré par AdGuard Home).
+> **Note DNS** : pour résoudre les noms `*.${DOMAIN}`, configurez vos clients et
+> serveurs avec l'IP de votre serveur AdGuard Home comme DNS primaire.
 
 ---
 
@@ -198,7 +210,7 @@ lab-example/
 ├── uninstall.sh             ← Désinstallation (--purge pour les volumes)
 ├── config/
 │   ├── adguardhome/
-│   │   └── custom.list      ← Enregistrements DNS locaux lab.local (si besoin)
+│   │   └── custom.list      ← Enregistrements DNS locaux ${DOMAIN} (si besoin)
 │   ├── squid/
 │   │   └── squid.conf       ← Configuration du proxy
 │   ├── traefik/
@@ -278,8 +290,10 @@ Configurez gandalf (192.168.1.254) pour distribuer `192.168.1.3` comme DNS via D
 
 ## TLS en lab privé
 
-Le domaine `.lab.local` n'est pas enregistré publiquement : Let's Encrypt n'est pas utilisé.
-Traefik génère des certificats **auto-signés** par défaut.
+Si vous utilisez un domaine interne non public, par exemple `intranet.home.arpa`, Let's Encrypt ne peut pas émettre de certificat valide pour cette zone.
+Traefik doit alors utiliser des certificats **auto-signés** ou des certificats générés avec `mkcert`.
+
+Si vous voulez des certificats Let's Encrypt valides, utilisez à la place un domaine public enregistré que vous contrôlez et configurez le challenge DNS-01.
 
 Pour un certificat de confiance local (éviter les avertissements navigateur) :
 
@@ -290,14 +304,14 @@ brew install mkcert       # macOS
 
 # Créer un CA local et un certificat wildcard
 mkcert -install
-mkcert "*.lab.local" lab.local
+mkcert "*.<votre-domaine-interne>" <votre-domaine-interne>
 
 # Monter le certificat dans Traefik
 # → créer config/traefik/dynamic/tls.yml avec :
 # tls:
 #   certificates:
-#     - certFile: /certs/_wildcard.lab.local.pem
-#       keyFile:  /certs/_wildcard.lab.local-key.pem
+#     - certFile: /certs/_wildcard.<votre-domaine-interne>.pem
+#       keyFile:  /certs/_wildcard.<votre-domaine-interne>-key.pem
 ```
 
 ---
@@ -380,21 +394,21 @@ Si vous choisissez AdGuard Home comme moteur DNS, les dossiers `config/adguardho
 # Ce projet est conçu pour être utilisé dans n'importe quel lab ou réseau local.
 # Les noms d'hôtes, domaines et adresses IP sont entièrement personnalisables lors de l'installation grâce au script interactif (scripts/generate-env.sh).
 #
-# Toutes les références à "lab.local" ou aux IP/domaines par défaut sont des exemples :
+# Toutes les références à des domaines internes ou à des IP par défaut sont des exemples :
 #   - Le domaine, les noms d'hôtes et les IP seront adaptés selon vos réponses lors de la génération du .env et du fichier hosts.
 #   - Les fichiers de configuration, scripts et documentation utilisent les variables du .env pour garantir la cohérence avec votre environnement.
 #
 # Exemple :
-#   - Domaine choisi : lab.local
-#   - Serveur principal : host1.lab.local (192.168.10.10)
-#   - Passerelle : gw.lab.local (192.168.10.1)
-#   - Hub multimédia : media.lab.local (192.168.10.20)
+#   - Domaine choisi : ${DOMAIN}
+#   - Serveur principal : host1.${DOMAIN} (192.168.10.10)
+#   - Passerelle : gw.${DOMAIN} (192.168.10.1)
+#   - Hub multimédia : media.${DOMAIN} (192.168.10.20)
 #
 # Les instructions, configurations et accès s'adapteront automatiquement à ces choix.
 #
 # Pour toute adaptation, lancez simplement l'installation et laissez-vous guider par les scripts interactifs.
 #
-# Dans toute la documentation, remplacez les exemples lab.local/192.168.10.x par vos propres valeurs renseignées dans le .env.
+# Dans toute la documentation, remplacez les exemples ${DOMAIN}/192.168.10.x par vos propres valeurs renseignées dans le .env.
 
 ---
 

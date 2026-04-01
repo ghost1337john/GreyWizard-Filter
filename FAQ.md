@@ -1,18 +1,12 @@
-### 7. Pourquoi mes entrées DNS locales (rewrites) ne sont-elles plus injectées automatiquement dans AdGuard Home ?
-- Suite à un bug, l'injection automatique des entrées DNS locales (bloc rewrites) dans la configuration AdGuard Home a été désactivée temporairement. Il faut désormais ajouter manuellement vos entrées dans la section `rewrites:` du fichier `AdGuardHome.yaml`. Consultez le README pour un exemple de syntaxe.
-# Q : Pourquoi dois-je passer par l’assistant web AdGuard Home lors de l’installation ?
-
-R : Par sécurité, le mot de passe admin doit être choisi par l’utilisateur lors du premier lancement via l’assistant web (install.html). Le script d’installation adapte ensuite automatiquement le port d’administration selon votre .env, mais ne modifie plus le mot de passe. Il suffit de relancer `sudo ./install.sh` après avoir terminé l’assistant web.
-
 # FAQ – Stack DNS/Proxy/Reverse Proxy
 
 ## Questions fréquentes
 
 ### 1. Je n’ai pas d’accès à l’interface web Pi-hole/AdGuard Home
 - Vérifiez que le conteneur DNS choisi est bien démarré (`docker compose ps`).
-- Vérifiez que le firewall local ou distant n’empêche pas l’accès au port (8080 pour Pi-hole, 3000 pour AdGuard Home).
+- Vérifiez que le firewall local ou distant n’empêche pas l’accès au port publié pour votre interface web.
 - Vérifiez que le reverse proxy Traefik est bien démarré.
-- Essayez d’accéder à l’interface via l’IP directe et le port local (ex : http://127.0.0.1:8080 ou :3000).
+- Essayez d’accéder à l’interface via l’IP directe et le port local configuré (ex : `http://127.0.0.1:${ADGUARD_PORT}` si vous utilisez AdGuard Home).
 
 - Assurez-vous que le DNS des clients pointe bien vers l’IP du serveur (voir .env, variable DOMAIN).
 - Vérifiez la redirection DNS sur le firewall/routeur (voir README, section redirection DNS).
@@ -26,6 +20,12 @@ R : Par sécurité, le mot de passe admin doit être choisi par l’utilisateur 
 - Par défaut, Traefik utilise des certificats auto-signés. Ajoutez le certificat racine à vos clients pour éviter les alertes.
 - Pour un certificat local de confiance, utilisez mkcert (voir README).
 - Le domaine utilisé pour les URL (ex : traefik.${DOMAIN}) est défini dans le .env.
+- Si vous activez l'auth basic Traefik, elle s'ajoute à l'authentification propre de l'application derrière Traefik. AdGuard Home demande donc son propre mot de passe après le passage dans Traefik.
+
+### 4 bis. Faut-il acheter un nom de domaine pour cette infrastructure ?
+- Pas pour faire fonctionner la stack en local.
+- Oui si vous voulez des certificats Let's Encrypt valides via Traefik en DNS-01 ou une exposition avec un vrai nom public.
+- Non si vous restez sur un domaine interne de type `lab.local`, mais dans ce cas il faut utiliser un certificat auto-signé ou `mkcert` au lieu de Let's Encrypt.
 
 ### 5. Les scripts ne sont pas exécutables
 - Rendez-les exécutables : `chmod +x scripts/*.sh install.sh`.
@@ -33,6 +33,16 @@ R : Par sécurité, le mot de passe admin doit être choisi par l’utilisateur 
 ### 6. Je veux changer de moteur DNS après installation
 - Modifiez la variable DNS_ENGINE dans .env.
 - Relancez la stack avec `bash scripts/compose-up.sh` ou `sudo ./install.sh`.
+
+### 7. Pourquoi mes entrées DNS locales (rewrites) ne sont-elles plus injectées automatiquement dans AdGuard Home ?
+- Suite à un bug, l'injection automatique des entrées DNS locales (bloc rewrites) dans la configuration AdGuard Home a été désactivée temporairement.
+- Ajoutez désormais vos entrées manuellement dans la section `rewrites:` du fichier `AdGuardHome.yaml`.
+- Consultez le README pour un exemple de syntaxe.
+
+### 8. Pourquoi dois-je passer par l’assistant web AdGuard Home lors de l’installation ?
+- Par sécurité, le mot de passe admin doit être choisi par l’utilisateur lors du premier lancement via l’assistant web `install.html`.
+- Le script d’installation adapte ensuite automatiquement le port d’administration selon votre `.env`, mais ne modifie plus le mot de passe.
+- Il suffit de relancer `sudo ./install.sh` après avoir terminé l’assistant web.
 
 ---
 

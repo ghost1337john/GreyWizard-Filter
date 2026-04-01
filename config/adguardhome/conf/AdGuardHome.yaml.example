@@ -9,9 +9,11 @@ bind_port: 3000
 
 # --- Authentification administrateur ---
 users:
-  - name: admin
-    password: admin  # Mot de passe par défaut : "admin"
-# IMPORTANT : Changez impérativement ce mot de passe via l'interface web AdGuard Home après la première connexion !
+  - name: replace_with_admin_username
+    password: replace_with_admin_password
+# IMPORTANT : ne commitez pas de vrai mot de passe dans ce fichier d'exemple.
+# Définissez le compte admin lors du premier lancement ou remplacez ces placeholders
+# uniquement dans votre environnement de déploiement.
 # (Menu Paramètres → Général → Utilisateurs)
 
 # ... autres options à compléter selon vos besoins ...

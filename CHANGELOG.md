@@ -1,5 +1,10 @@
 # Changelog – Stack DNS/Proxy/Reverse Proxy
 
+## [1.0.1] – 2026-04-01
+- Nettoyage des exemples et de la documentation pour supprimer les valeurs sensibles, hashes, emails et tokens réels.
+- Clarification de la différence entre domaine interne et domaine public pour l'utilisation de Let's Encrypt.
+- Ajout d'instructions explicites indiquant qu'un domaine public enregistré est requis pour DNS-01 avec Traefik.
+- Harmonisation du README, de la FAQ et des guides de configuration autour des placeholders `${DOMAIN}` et des valeurs à renseigner.
 
 - Améliorations continues de la documentation et des scripts
 - Harmonisation de la documentation avec la variable DOMAIN du .env (remplace TRAEFIK_DOMAIN)

@@ -2,11 +2,18 @@
 
 Ce document regroupe des guides pratiques pour configurer chaque service de la stack via leur interface web ou fichier de configuration, selon les besoins courants.
 
+Important pour les noms de domaine et TLS :
+- si vous utilisez un domaine interne uniquement, la stack fonctionne en local mais Let's Encrypt ne pourra pas émettre de certificat valide
+- si vous voulez des certificats Let's Encrypt via Traefik, utilisez un nom de domaine public enregistré que vous contrôlez et configurez correctement votre DNS
+- sans domaine public, utilisez un certificat auto-signé ou `mkcert`
+
 ---
 
 
 - URL : https://adguard.${DOMAIN} (le domaine est défini dans le .env)
-- Authentification : login admin (défini au premier lancement ou dans AdGuardHome.yaml)
+- Authentification :
+- d'abord basicAuth Traefik si elle est activée dans `config/traefik/dynamic/middlewares.yml`
+- ensuite le compte admin propre à AdGuard Home, défini au premier lancement ou dans `AdGuardHome.yaml`
 
 ### Exemples de configuration
 - **Ajouter une liste de filtres** :
@@ -25,7 +32,8 @@ Ce document regroupe des guides pratiques pour configurer chaque service de la s
 ---
 
 - URL : https://traefik.${DOMAIN} (le domaine est défini dans le .env)
-- Authentification : basicAuth (login admin, mot de passe hashé dans config/traefik/dynamic/middlewares.yml)
+- Authentification : basicAuth configurée dans `config/traefik/dynamic/middlewares.yml`
+- Le hash bcrypt doit être généré localement avec `htpasswd -nB <utilisateur>` puis collé dans le fichier sans commiter de valeur réelle dans le dépôt.
 
 ### Exemples de configuration
 - **Voir l’état des routes/services** :

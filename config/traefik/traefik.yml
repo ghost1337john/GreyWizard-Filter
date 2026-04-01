@@ -67,7 +67,9 @@ accessLog:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: "fontaine906@gmail.com"
+      # Remplacez cette valeur par une adresse email de contact valide pour Let's Encrypt.
+      # Ne commitez pas d'adresse personnelle si ce dépôt doit rester générique.
+      email: "replace-with-your-email@example.com"
       storage: "/certs/acme.json"
       dnsChallenge:
         provider: cloudflare

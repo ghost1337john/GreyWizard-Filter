@@ -12,12 +12,12 @@ http:
   routers:
 
     # ── Media – forwarding vers le hub multimédia (Plex) ───
-    # Redirige https://media.${DOMAIN} vers 192.168.10.20:32400
+    # Redirige https://media.${DOMAIN} vers l'IP/port de votre service externe
     # (port 32400 = Plex Media Server)
 
     # Exemple de route externe (adapter ou supprimer si inutile)
     # media:
-    #   rule: "Host(`media.greyhaven.local`)"
+    #   rule: "Host(`media.${DOMAIN}`)"
     #   entryPoints:
     #     - websecure
     #   tls: {}
@@ -27,7 +27,7 @@ http:
     #   service: palantir-svc
 
     # gw:
-    #   rule: "Host(`gw.greyhaven.local`)"
+    #   rule: "Host(`gw.${DOMAIN}`)"
     #   entryPoints:
     #     - websecure
     #   tls: {}
@@ -42,12 +42,12 @@ http:
     palantir-svc:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.2:32400"
+          - url: "http://replace_with_service_ip:32400"
         passHostHeader: true
 
     # Service gandalf – interface admin du routeur (port 80 par ex.)
     gandalf-svc:
       loadBalancer:
         servers:
-          - url: "http://192.168.1.254:80"
+          - url: "http://replace_with_gateway_ip:80"
         passHostHeader: true

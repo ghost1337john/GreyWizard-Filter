@@ -9,13 +9,14 @@ http:
 
     # ── Authentification basique ─────────────────────────────
     # Protège les tableaux de bord (Traefik, Pi-hole).
-    # Pour générer un hash bcrypt personnalisé (remplacez le placeholder !) :
-    #   echo $(htpasswd -nB admin) | sed -e 's/\$/\$\$/g'
-    # Placez le hash généré à la place de 'placeholder_replace_with_real_hash' ci-dessous.
+    # Pour générer un hash bcrypt personnalisé :
+    #   htpasswd -nB admin
+    # Placez ensuite la ligne complète renvoyée par htpasswd à la place du placeholder ci-dessous.
+    # Dans ce fichier YAML chargé directement par Traefik, conservez les $ simples du hash brut.
     auth:
       basicAuth:
         users:
-          - "admin:$2y$05$AhBLWlBZq2Z1HL83C8Gc/ew0If0QOKA/QR844xPWFsIY603PfyaaG"
+          - "replace_with_user:replace_with_bcrypt_hash"
 
     # ── En-têtes de sécurité HTTP ────────────────────────────
     secure-headers:
