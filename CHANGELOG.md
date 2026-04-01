@@ -6,6 +6,7 @@
 - Ajout d'instructions explicites indiquant qu'un domaine public enregistré est requis pour DNS-01 avec Traefik.
 - Harmonisation du README, de la FAQ et des guides de configuration autour des placeholders `${DOMAIN}` et des valeurs à renseigner.
 
+## [Unreleased]
 - Améliorations continues de la documentation et des scripts
 - Harmonisation de la documentation avec la variable DOMAIN du .env (remplace TRAEFIK_DOMAIN)
 - Ajout d’exemples de configuration pour AdGuard Home

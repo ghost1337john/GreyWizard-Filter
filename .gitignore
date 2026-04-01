@@ -1,0 +1,17 @@
+# Local environment and secrets
+.env
+
+# Generated TLS material
+traefik_certs/*
+!traefik_certs/.gitkeep
+
+# AdGuard Home runtime state
+config/adguardhome/conf/AdGuardHome.yaml
+config/adguardhome/work/data/
+config/adguardhome/work/querylog.json
+config/adguardhome/work/querylog.json.1
+config/adguardhome/work/stats.db
+config/adguardhome/work/sessions.db
+
+# Common local artifacts
+*.log

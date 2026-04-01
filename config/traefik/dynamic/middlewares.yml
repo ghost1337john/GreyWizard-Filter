@@ -8,7 +8,7 @@ http:
   middlewares:
 
     # ── Authentification basique ─────────────────────────────
-    # Protège les tableaux de bord (Traefik, Pi-hole).
+    # Protège les interfaces d'administration (Traefik, AdGuard Home).
     # Pour générer un hash bcrypt personnalisé :
     #   htpasswd -nB admin
     # Placez ensuite la ligne complète renvoyée par htpasswd à la place du placeholder ci-dessous.

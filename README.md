@@ -91,6 +91,7 @@ sudo bash ./install.sh
 # 7. Lors du premier lancement, ouvrez votre navigateur sur http://<IP>:<PORT> (ex : http://192.168.1.3:8080)
 #    et terminez l'assistant d'installation web AdGuard Home (choix du mot de passe admin, etc.).
 #    Laissez le script attendre ou relancez ./install.sh après l'installation web.
+```
 
 ---
 
@@ -135,17 +136,18 @@ Vous pouvez aussi utiliser [mkcert](https://github.com/FiloSottile/mkcert) pour 
 
 [Traefik v3 documentation](https://doc.traefik.io/traefik/)
 
+```bash
 # 8. Relancez l'installation pour appliquer automatiquement le port choisi dans .env et injecter les entrées DNS locales dans la section rewrites :
 sudo bash ./install.sh
 
 # 9. (Optionnel) Redémarrez la stack si besoin :
 sudo docker compose restart
+```
 
 > ⚠️ **Important** : Ne lancez pas `compose-up.sh` avant `install.sh` !
 > Le script d'installation prépare l'environnement, crée les dossiers et fichiers nécessaires, et vérifie la configuration. Si vous inversez l'ordre, la stack risque de ne pas démarrer correctement ou d'être incomplète.
 
 > ℹ️ **Astuce** : Utilisez toujours `sudo bash ...` pour éviter les problèmes de droits lors de l'installation et du lancement des scripts.
-```
 
 ## Procedure automatisee des prerequis
 
