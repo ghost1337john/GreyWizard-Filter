@@ -1,5 +1,5 @@
 
-> ⚠️ **DISCLAIMER : Ce projet est en phase de test. Il peut contenir des bugs, des fonctionnalités incomplètes ou instables. Utilisation à vos risques et périls !**
+> ⚠️ **DISCLAIMER :** ce projet a été testé et déployé dans un lab domestique réel, mais il peut encore contenir des bugs ou nécessiter des ajustements selon votre environnement.
 
 
 # GreyWizard-Filter : la stack de filtrage et reverse proxy adaptable à tout lab ou réseau local
@@ -28,7 +28,7 @@ Ensemble, ils forment la **Communauté du Filtre**, protégeant votre lab des fo
 ---
 
 
-> **ℹ️ Note :** L'intégration de Traefik est actuellement en phase de test. Les autres services (AdGuard Home, Squid) sont stables et pleinement fonctionnels. Traefik sera officiellement intégré et documenté dans la prochaine release majeure du projet.
+> **ℹ️ Statut :** le projet a été testé et mis en place dans le lab personnel du mainteneur. AdGuard Home, Squid et Traefik ont été validés ensemble dans cet environnement, mais des adaptations peuvent rester nécessaires selon votre réseau, votre DNS et votre distribution Linux.
 
 > **ℹ️ Domaine et certificats TLS :** si vous voulez des certificats Let's Encrypt via DNS-01, vous devez disposer d'un nom de domaine public que vous contrôlez réellement, en pratique un domaine enregistré chez un registrar et géré par un fournisseur DNS compatible comme Cloudflare. Un domaine purement interne de type `lab.local` ou un sous-domaine non délégué publiquement ne permet pas d'obtenir ces certificats. Dans ce cas, utilisez un certificat auto-signé ou `mkcert`.
 
@@ -381,6 +381,15 @@ Si vous choisissez AdGuard Home comme moteur DNS, les dossiers `config/adguardho
 
 - **Pas de fichier de configuration par défaut** : AdGuard Home génère ses fichiers de config au premier lancement. Vous pouvez placer vos propres fichiers dans ces dossiers si besoin.
 - Un fichier `README.txt` est placé pour vous guider.
+
+---
+
+## Support
+
+Si vous avez besoin d'aide pour adapter ou déployer la stack dans votre environnement :
+
+- ouvrez une issue sur le dépôt GitHub
+- ou envoyez un message au mainteneur ; une réponse sera apportée dès que possible
 
 ---
 
